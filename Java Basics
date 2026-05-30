@@ -68,3 +68,635 @@ Security
 Compilation is done by javac.
 
 ---Compiler is present only in JDK.
+
+# Explain the JVM Architecture and Its Main Components
+
+## Interview Answer (1-2 Minutes)
+
+JVM (Java Virtual Machine) is a runtime environment responsible for executing Java bytecode. It provides platform independence and manages memory, class loading, code execution, and garbage collection.
+
+The main components of JVM are:
+
+1. Class Loader Subsystem
+2. Runtime Data Areas (Memory Areas)
+3. Execution Engine
+
+The Class Loader loads `.class` files into memory, Runtime Data Areas store data required during execution, and the Execution Engine executes the bytecode by converting it into machine code.
+
+---
+
+## JVM Architecture Overview
+
+```text
+                Java Source Code
+                        |
+                     javac
+                        |
+                   Bytecode
+                   (.class)
+                        |
+                Class Loader
+                        |
+             Runtime Data Areas
+                        |
+               Execution Engine
+                        |
+                  Machine Code
+                        |
+                    CPU Executes
+```
+
+---
+
+# 1. Class Loader Subsystem
+
+## Interview Answer
+
+The Class Loader is responsible for loading Java classes into JVM memory when they are required.
+
+Java uses Dynamic Class Loading, which means classes are loaded at runtime instead of loading all classes at application startup.
+
+---
+
+## Class Loading Process
+
+### Step 1: Loading
+
+Class bytecode is loaded into memory.
+
+```java
+Employee emp = new Employee();
+```
+
+When JVM encounters this statement for the first time:
+
+```text
+Employee.class
+      ↓
+Loaded into JVM
+```
+
+---
+
+### Step 2: Linking
+
+Linking consists of:
+
+#### Verification
+
+Checks whether bytecode is valid.
+
+Example:
+
+```text
+Invalid bytecode
+      ↓
+ClassFormatError
+```
+
+---
+
+#### Preparation
+
+Allocates memory for static variables.
+
+```java
+static int count = 10;
+```
+
+Memory is reserved here.
+
+---
+
+#### Resolution
+
+Symbolic references are converted into actual memory references.
+
+---
+
+### Step 3: Initialization
+
+Static variables are assigned actual values.
+
+```java
+static int count = 10;
+```
+
+Value 10 gets assigned.
+
+---
+
+# Types of Class Loaders
+
+## 1. Bootstrap Class Loader
+
+Loads core Java classes.
+
+Examples:
+
+```java
+java.lang.String
+java.util.ArrayList
+java.lang.Object
+```
+
+---
+
+## 2. Platform (Extension) Class Loader
+
+Loads Java extension libraries.
+
+```text
+jdk.*
+javax.*
+```
+
+---
+
+## 3. Application Class Loader
+
+Loads classes from application's classpath.
+
+Example:
+
+```java
+Employee.class
+Student.class
+```
+
+---
+
+# Cross Question
+
+### Q: Can we create our own Class Loader?
+
+Answer:
+
+Yes.
+
+By extending:
+
+```java
+ClassLoader
+```
+
+---
+
+# 2. Runtime Data Areas
+
+## Interview Answer
+
+Runtime Data Areas are memory regions used by JVM during program execution.
+
+Some areas are shared by all threads and some are thread-specific.
+
+---
+
+## Runtime Data Areas Diagram
+
+```text
+                 JVM Memory
+
+       Shared By All Threads
+       ---------------------
+       Heap
+       Metaspace
+       Code Cache
+
+       Per Thread
+       ----------
+       Stack
+       PC Register
+       Native Method Stack
+```
+
+---
+
+# 2.1 Heap Memory
+
+## Interview Answer
+
+Heap is the memory area where all objects and instance variables are stored.
+
+It is shared among all threads.
+
+Garbage Collector primarily works on Heap memory.
+
+---
+
+## Example
+
+```java
+Employee emp = new Employee();
+```
+
+Object:
+
+```java
+new Employee()
+```
+
+is stored in Heap.
+
+Reference:
+
+```java
+emp
+```
+
+is stored in Stack.
+
+---
+
+## Heap Structure
+
+```text
+Heap
+ |
+ +-- Young Generation
+ |      |
+ |      +-- Eden
+ |      +-- Survivor S0
+ |      +-- Survivor S1
+ |
+ +-- Old Generation
+```
+
+---
+
+## Cross Question
+
+### Q: Why do we get OutOfMemoryError?
+
+Answer:
+
+When Heap memory becomes full and JVM cannot allocate more memory.
+
+```text
+java.lang.OutOfMemoryError: Java heap space
+```
+
+---
+
+# 2.2 Stack Memory
+
+## Interview Answer
+
+Each thread has its own Stack memory.
+
+Method calls, local variables, and references are stored in Stack.
+
+---
+
+## Example
+
+```java
+public void test() {
+    int age = 25;
+    Employee emp = new Employee();
+}
+```
+
+Stack contains:
+
+```text
+age = 25
+emp reference
+```
+
+Heap contains:
+
+```text
+Employee object
+```
+
+---
+
+## Stack Frame
+
+Every method call creates a Stack Frame.
+
+```java
+main()
+   |
+   +-- methodA()
+           |
+           +-- methodB()
+```
+
+Stack:
+
+```text
+methodB()
+methodA()
+main()
+```
+
+---
+
+## Cross Question
+
+### Q: Why StackOverflowError occurs?
+
+Answer:
+
+Due to excessive recursive calls.
+
+Example:
+
+```java
+public void test() {
+    test();
+}
+```
+
+Error:
+
+```text
+java.lang.StackOverflowError
+```
+
+---
+
+# 2.3 Metaspace
+
+## Interview Answer
+
+Metaspace stores class metadata.
+
+Before Java 8 it was called PermGen.
+
+From Java 8 onwards it was replaced by Metaspace.
+
+---
+
+## Stores
+
+- Class definitions
+- Method metadata
+- Static metadata
+- Runtime constant pool
+
+---
+
+## Example
+
+```java
+Employee.class
+```
+
+Class information is stored in Metaspace.
+
+---
+
+## Cross Question
+
+### Q: Difference between PermGen and Metaspace?
+
+| PermGen | Metaspace |
+|----------|----------|
+| Java 7 and below | Java 8+ |
+| Fixed size | Dynamically grows |
+| Part of JVM memory | Uses native memory |
+
+---
+
+# 2.4 Code Cache
+
+## Interview Answer
+
+Code Cache stores compiled native machine code generated by the JIT Compiler.
+
+This improves performance because JVM doesn't need to interpret bytecode repeatedly.
+
+---
+
+## Flow
+
+```text
+Bytecode
+    ↓
+JIT Compiler
+    ↓
+Native Machine Code
+    ↓
+Code Cache
+```
+
+---
+
+## Benefit
+
+Frequently executed methods run faster.
+
+---
+
+# 3. Execution Engine
+
+## Interview Answer
+
+Execution Engine executes the bytecode loaded into memory.
+
+It consists of:
+
+1. Interpreter
+2. JIT Compiler
+3. Garbage Collector
+
+---
+
+# Interpreter
+
+Reads bytecode line by line and executes it.
+
+```text
+Bytecode
+   ↓
+Interpreter
+   ↓
+Execution
+```
+
+---
+
+## Problem
+
+Slow because it translates every instruction repeatedly.
+
+---
+
+# JIT Compiler (Just-In-Time Compiler)
+
+Compiles frequently used bytecode into native machine code.
+
+```text
+Bytecode
+    ↓
+JIT
+    ↓
+Machine Code
+```
+
+Next execution becomes much faster.
+
+---
+
+## Example
+
+Frequently called method:
+
+```java
+calculateSalary()
+```
+
+gets compiled into machine code.
+
+---
+
+# Garbage Collector
+
+## Interview Answer
+
+Garbage Collector automatically removes unused objects from Heap memory.
+
+---
+
+## Example
+
+```java
+Employee emp = new Employee();
+
+emp = null;
+```
+
+Object becomes eligible for garbage collection.
+
+---
+
+# Cross Questions & Answers
+
+## Q1: Which memory area stores Objects?
+
+Answer:
+
+Heap Memory.
+
+---
+
+## Q2: Which memory area stores Local Variables?
+
+Answer:
+
+Stack Memory.
+
+---
+
+## Q3: Which memory area stores Class Metadata?
+
+Answer:
+
+Metaspace.
+
+---
+
+## Q4: Which memory area stores JIT compiled code?
+
+Answer:
+
+Code Cache.
+
+---
+
+## Q5: Is Heap shared among threads?
+
+Answer:
+
+Yes.
+
+Heap is shared by all threads.
+
+---
+
+## Q6: Is Stack shared among threads?
+
+Answer:
+
+No.
+
+Each thread gets its own Stack.
+
+---
+
+## Q7: What replaced PermGen?
+
+Answer:
+
+Metaspace in Java 8.
+
+---
+
+## Q8: Which component loads classes?
+
+Answer:
+
+Class Loader Subsystem.
+
+---
+
+## Q9: Difference between Interpreter and JIT?
+
+| Interpreter | JIT Compiler |
+|------------|------------|
+| Executes line by line | Compiles to machine code |
+| Slower | Faster |
+| No optimization | Optimized execution |
+
+---
+
+# Common Interview Trap
+
+### Question
+
+Where is an object stored?
+
+```java
+Employee emp = new Employee();
+```
+
+### Correct Answer
+
+Heap:
+
+```java
+new Employee()
+```
+
+Stack:
+
+```java
+emp
+```
+
+(reference variable)
+
+---
+
+# Key Points for Revision
+
+- JVM = Class Loader + Runtime Data Areas + Execution Engine.
+- Heap stores Objects.
+- Stack stores Method Calls and Local Variables.
+- Metaspace stores Class Metadata.
+- Code Cache stores JIT compiled native code.
+- Heap is Shared.
+- Stack is Thread Specific.
+- JIT improves performance.
+- Garbage Collector works mainly on Heap.
+- Java 8 replaced PermGen with Metaspace.
+
+---
+
+# One-Line Summary
+
+JVM loads classes through the Class Loader, stores execution data in Runtime Data Areas (Heap, Stack, Metaspace, Code Cache), 
+and executes bytecode using the Execution Engine consisting of Interpreter, JIT Compiler, and Garbage Collector.
