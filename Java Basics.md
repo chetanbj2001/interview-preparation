@@ -71,7 +71,6 @@ Compilation is done by javac.
 
 # Explain the JVM Architecture and Its Main Components
 
-## Interview Answer (1-2 Minutes)
 
 JVM (Java Virtual Machine) is a runtime environment responsible for executing Java bytecode. It provides platform independence and manages memory, class loading, code execution, and garbage collection.
 
@@ -700,3 +699,562 @@ emp
 
 JVM loads classes through the Class Loader, stores execution data in Runtime Data Areas (Heap, Stack, Metaspace, Code Cache), 
 and executes bytecode using the Execution Engine consisting of Interpreter, JIT Compiler, and Garbage Collector.
+
+
+# What is ClassLoader in Java? Explain Parent Delegation Model.
+
+ClassLoader is a JVM component responsible for loading Java classes into memory at runtime.
+
+Whenever JVM needs a class, it asks the ClassLoader to locate the class file, load it into memory, and make it available for execution.
+
+Java uses Dynamic Class Loading, meaning classes are loaded only when they are required, not all at once during application startup.
+
+Java follows the Parent Delegation Model, where a ClassLoader first delegates the class loading request to its parent before attempting to load the class itself. This prevents duplicate class loading and enhances security.
+
+---
+
+# Why Do We Need ClassLoader?
+
+Suppose we have:
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Employee emp = new Employee();
+    }
+}
+```
+
+When JVM encounters:
+
+```java
+Employee emp = new Employee();
+```
+
+It needs:
+
+```text
+Employee.class
+```
+
+The ClassLoader finds this file, loads it into memory, verifies it, and makes it available to JVM.
+
+Without ClassLoader, JVM would not know where to find classes.
+
+---
+
+# Responsibilities of ClassLoader
+
+1. Load classes into memory.
+2. Verify bytecode.
+3. Resolve dependencies.
+4. Link classes.
+5. Initialize classes.
+
+---
+
+# Class Loading Process
+
+Java class loading occurs in three phases:
+
+```text
+Loading
+   ↓
+Linking
+   ↓
+Initialization
+```
+
+---
+
+## 1. Loading
+
+ClassLoader reads the `.class` file and creates a Class object inside JVM memory.
+
+Example:
+
+```java
+Employee.class
+```
+
+gets loaded into memory.
+
+---
+
+## 2. Linking
+
+Linking consists of three steps:
+
+### Verification
+
+Checks whether bytecode is valid.
+
+Example:
+
+```text
+Invalid bytecode
+       ↓
+ClassFormatError
+```
+
+---
+
+### Preparation
+
+Memory is allocated for static variables.
+
+```java
+static int count;
+```
+
+Memory gets reserved.
+
+---
+
+### Resolution
+
+Symbolic references are converted into actual memory references.
+
+---
+
+## 3. Initialization
+
+Static variables receive their actual values.
+
+```java
+static int count = 100;
+```
+
+Value 100 gets assigned.
+
+---
+
+# Types of ClassLoaders
+
+Java has three built-in ClassLoaders.
+
+```text
+Bootstrap ClassLoader
+         ↑
+Platform ClassLoader
+         ↑
+Application ClassLoader
+```
+
+---
+
+# 1. Bootstrap ClassLoader
+
+## Interview Answer
+
+Bootstrap ClassLoader is the parent of all ClassLoaders.
+
+It loads core Java classes.
+
+Examples:
+
+```java
+java.lang.String
+java.lang.Object
+java.util.ArrayList
+```
+
+---
+
+## Loaded From
+
+```text
+JAVA_HOME/lib
+```
+
+or JVM internal runtime modules.
+
+---
+
+## Cross Question
+
+### Q: Is Bootstrap ClassLoader written in Java?
+
+Answer:
+
+No.
+
+It is implemented in native code (C/C++).
+
+---
+
+# 2. Platform ClassLoader
+
+(Previously called Extension ClassLoader)
+
+Loads Java platform libraries.
+
+Examples:
+
+```java
+javax.sql.*
+jdk.*
+javax.crypto.*
+```
+
+---
+
+# 3. Application ClassLoader
+
+## Interview Answer
+
+Application ClassLoader loads classes from the application's classpath.
+
+Examples:
+
+```java
+Employee.class
+Student.class
+Product.class
+```
+
+Most business application classes are loaded by Application ClassLoader.
+
+---
+
+# How JVM Finds a Class?
+
+Suppose:
+
+```java
+new Employee();
+```
+
+JVM asks:
+
+```text
+Application ClassLoader
+```
+
+for Employee.class.
+
+Application ClassLoader follows Parent Delegation Model.
+
+---
+
+# Parent Delegation Model
+
+## Interview Answer
+
+In Parent Delegation Model, a ClassLoader first delegates the request to its parent ClassLoader before trying to load the class itself.
+
+Only if the parent cannot find the class does the child attempt to load it.
+
+---
+
+# Flow Diagram
+
+Suppose JVM wants:
+
+```java
+java.lang.String
+```
+
+Flow:
+
+```text
+Application ClassLoader
+          |
+          ↓
+Platform ClassLoader
+          |
+          ↓
+Bootstrap ClassLoader
+```
+
+Bootstrap finds String class and loads it.
+
+---
+
+# Example 1
+
+Request:
+
+```java
+java.lang.String
+```
+
+Process:
+
+```text
+Application CL
+      ↓
+Platform CL
+      ↓
+Bootstrap CL
+      ↓
+String Found
+      ↓
+Loaded
+```
+
+---
+
+# Example 2
+
+Request:
+
+```java
+Employee.class
+```
+
+Process:
+
+```text
+Application CL
+      ↓
+Platform CL
+      ↓
+Bootstrap CL
+      ↓
+Not Found
+      ↑
+Platform CL
+      ↑
+Application CL
+      ↓
+Employee Found
+      ↓
+Loaded
+```
+
+---
+
+# Why Parent Delegation Model?
+
+## Reason 1: Security
+
+Suppose a developer creates:
+
+```java
+package java.lang;
+
+public class String {
+}
+```
+
+Without Parent Delegation:
+
+```text
+Custom String Class
+```
+
+could replace:
+
+```text
+Original Java String Class
+```
+
+This would be dangerous.
+
+Because Bootstrap ClassLoader loads the original String first, replacement is prevented.
+
+---
+
+## Reason 2: Avoid Duplicate Loading
+
+Without delegation:
+
+```text
+String.class
+```
+
+might be loaded multiple times.
+
+Parent delegation ensures one copy is loaded.
+
+---
+
+## Reason 3: Consistency
+
+All applications use the same core Java classes.
+
+---
+
+# Cross Questions & Answers
+
+## Q1: What is ClassLoader?
+
+Answer:
+
+A JVM component responsible for loading classes into memory at runtime.
+
+---
+
+## Q2: How many built-in ClassLoaders are available?
+
+Answer:
+
+Three:
+
+1. Bootstrap ClassLoader
+2. Platform ClassLoader
+3. Application ClassLoader
+
+---
+
+## Q3: Which ClassLoader loads String class?
+
+Answer:
+
+Bootstrap ClassLoader.
+
+---
+
+## Q4: Which ClassLoader loads your project classes?
+
+Answer:
+
+Application ClassLoader.
+
+---
+
+## Q5: What is Parent Delegation Model?
+
+Answer:
+
+A child ClassLoader first delegates class loading to its parent before trying to load the class itself.
+
+---
+
+## Q6: Why is Parent Delegation important?
+
+Answer:
+
+- Security
+- Prevent duplicate loading
+- Consistency
+
+---
+
+## Q7: Can we create our own ClassLoader?
+
+Answer:
+
+Yes.
+
+By extending:
+
+```java
+ClassLoader
+```
+
+Example:
+
+```java
+public class MyClassLoader extends ClassLoader {
+}
+```
+
+---
+
+## Q8: What happens if the same class is loaded by two different ClassLoaders?
+
+Answer:
+
+JVM treats them as two different classes.
+
+This is a popular advanced interview question.
+
+---
+
+## Q9: What exception occurs if a class cannot be found?
+
+Answer:
+
+```java
+ClassNotFoundException
+```
+
+or
+
+```java
+NoClassDefFoundError
+```
+
+depending on the scenario.
+
+---
+
+# ClassNotFoundException vs NoClassDefFoundError
+
+| ClassNotFoundException | NoClassDefFoundError |
+|------------------------|----------------------|
+| Checked Exception | Error |
+| Happens during loading | Happens after successful compilation |
+| Class unavailable in classpath | JVM cannot find class definition |
+
+---
+
+# Real-World Spring Boot Connection
+
+When Spring Boot starts:
+
+```java
+@Controller
+@Service
+@Repository
+@Component
+```
+
+all these classes are loaded into JVM using the ClassLoader.
+
+Understanding ClassLoader helps explain:
+
+- Spring Boot startup process
+- Reflection
+- Bean creation
+- Dynamic proxies
+- JDBC Drivers
+
+---
+
+# Common Interview Mistakes
+
+### Wrong
+
+"ClassLoader loads all classes when JVM starts."
+
+### Correct
+
+Classes are loaded on demand (Lazy Loading).
+
+---
+
+### Wrong
+
+"Application ClassLoader loads String class."
+
+### Correct
+
+Bootstrap ClassLoader loads String class.
+
+---
+
+# Key Points for Revision
+
+- ClassLoader loads classes into JVM memory.
+- Java uses Dynamic Class Loading.
+- Three built-in ClassLoaders:
+  - Bootstrap
+  - Platform
+  - Application
+- Bootstrap loads core Java classes.
+- Application loads project classes.
+- Parent Delegation Model = Child asks Parent first.
+- Benefits:
+  - Security
+  - No duplicate loading
+  - Consistency
+- String class is loaded by Bootstrap ClassLoader.
+
+---
+
+# One-Line Summary
+
+ClassLoader is responsible for loading classes into JVM memory, and the Parent Delegation Model ensures that class loading requests are delegated to parent ClassLoaders first, providing security, consistency, and preventing duplicate class loading.
