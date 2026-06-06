@@ -536,3 +536,545 @@ Abstraction.
 # One-Line Summary
 
 OOP is a programming paradigm based on objects, and its four pillars—Encapsulation, Abstraction, Inheritance, and Polymorphism—help build reusable, maintainable, secure, and scalable applications.
+
+# Tricky Interview Questions on OOP
+
+---
+
+## Q1: Is Java 100% Object-Oriented?
+
+### Answer
+
+No.
+
+Java supports primitive data types:
+
+```java
+int
+char
+double
+boolean
+```
+
+Pure Object-Oriented languages do not have primitive types.
+
+Therefore Java is not considered 100% Object-Oriented.
+
+---
+
+## Q2: Why is String considered an Object if String literals are used?
+
+### Answer
+
+String is a class in Java.
+
+Example:
+
+```java
+String name = "Chetan";
+```
+
+Even though it looks like a primitive value, JVM internally creates a String object.
+
+---
+
+## Q3: Can We Achieve Encapsulation Without Getters and Setters?
+
+### Answer
+
+Yes.
+
+Encapsulation means restricting direct access to data.
+
+Getters and setters are just one way to achieve it.
+
+Example:
+
+```java
+class Employee {
+
+    private String name;
+
+    public void updateName(String newName) {
+        this.name = newName;
+    }
+}
+```
+
+Still encapsulated.
+
+---
+
+## Q4: Is Encapsulation Only About Making Variables Private?
+
+### Answer
+
+No.
+
+Making variables private is one implementation.
+
+Actual goal:
+
+```text
+Data Hiding
+Controlled Access
+```
+
+---
+
+## Q5: Can We Achieve Abstraction Without Interfaces?
+
+### Answer
+
+Yes.
+
+Using Abstract Classes.
+
+Example:
+
+```java
+abstract class Vehicle {
+
+    abstract void start();
+}
+```
+
+Abstraction can be achieved using:
+
+- Interface
+- Abstract Class
+
+---
+
+## Q6: Can We Create an Object of an Abstract Class?
+
+### Answer
+
+No.
+
+Invalid:
+
+```java
+abstract class Vehicle {}
+
+Vehicle v = new Vehicle();
+```
+
+Compilation Error.
+
+---
+
+## Q7: Can an Abstract Class Have Constructors?
+
+### Answer
+
+Yes.
+
+Example:
+
+```java
+abstract class Vehicle {
+
+    Vehicle() {
+        System.out.println("Constructor");
+    }
+}
+```
+
+Abstract classes can have constructors.
+
+---
+
+## Q8: Why Do Abstract Classes Have Constructors If We Cannot Create Objects?
+
+### Answer
+
+Because constructors are executed when child classes are instantiated.
+
+Example:
+
+```java
+class Car extends Vehicle {
+
+}
+```
+
+```java
+Car car = new Car();
+```
+
+Parent constructor executes first.
+
+---
+
+## Q9: Can an Interface Have Method Implementations?
+
+### Answer
+
+Yes.
+
+Since Java 8:
+
+```java
+default void test() {
+
+}
+```
+
+and
+
+```java
+static void test() {
+
+}
+```
+
+Since Java 9:
+
+```java
+private void helper() {
+
+}
+```
+
+---
+
+## Q10: Why Does Java Not Support Multiple Inheritance Through Classes?
+
+### Answer
+
+To avoid Diamond Problem.
+
+Example:
+
+```java
+class A {
+    void show() {}
+}
+
+class B extends A {
+}
+
+class C extends A {
+}
+
+class D extends B, C {
+}
+```
+
+JVM becomes confused about which implementation to use.
+
+---
+
+## Q11: What Is Diamond Problem?
+
+### Answer
+
+When multiple parent classes provide the same method and child inherits from both.
+
+Example:
+
+```text
+      A
+     / \
+    B   C
+     \ /
+      D
+```
+
+If both B and C have:
+
+```java
+show()
+```
+
+Which method should D use?
+
+This ambiguity is called Diamond Problem.
+
+---
+
+## Q12: Why Does Java Allow Multiple Inheritance Through Interfaces?
+
+### Answer
+
+Interfaces do not force implementation inheritance.
+
+Example:
+
+```java
+interface A {
+    void show();
+}
+
+interface B {
+    void show();
+}
+```
+
+Child class must provide implementation.
+
+No ambiguity exists.
+
+---
+
+## Q13: Can Constructors Be Overridden?
+
+### Answer
+
+No.
+
+Constructors are not inherited.
+
+Only inherited methods can be overridden.
+
+---
+
+## Q14: Can Static Methods Be Overridden?
+
+### Answer
+
+No.
+
+Static methods belong to class.
+
+They are hidden, not overridden.
+
+Example:
+
+```java
+class Parent {
+
+    static void show() {}
+}
+
+class Child extends Parent {
+
+    static void show() {}
+}
+```
+
+This is Method Hiding.
+
+---
+
+## Q15: Can Private Methods Be Overridden?
+
+### Answer
+
+No.
+
+Private methods are not inherited.
+
+Therefore overriding is impossible.
+
+---
+
+## Q16: Which OOP Pillar Is Most Important?
+
+### Answer
+
+There is no "most important."
+
+All four pillars work together:
+
+```text
+Encapsulation → Security
+Abstraction → Simplicity
+Inheritance → Reusability
+Polymorphism → Flexibility
+```
+
+---
+
+## Q17: What Is the Difference Between IS-A and HAS-A Relationship?
+
+### Answer
+
+IS-A → Inheritance
+
+Example:
+
+```text
+Dog IS-A Animal
+```
+
+HAS-A → Composition/Aggregation
+
+Example:
+
+```text
+Car HAS-A Engine
+```
+
+---
+
+## Q18: What Is More Preferred in Real Projects: Inheritance or Composition?
+
+### Answer
+
+Composition.
+
+Reason:
+
+- Loose Coupling
+- Better Maintainability
+- Better Testing
+
+This follows:
+
+```text
+Favor Composition Over Inheritance
+```
+
+which is a very popular interview point.
+
+---
+
+## Q19: Why Is Composition Preferred Over Inheritance?
+
+### Answer
+
+Inheritance creates tight coupling.
+
+Composition provides flexibility.
+
+Example:
+
+```java
+class Car {
+
+    Engine engine;
+}
+```
+
+Instead of:
+
+```java
+class Car extends Engine {
+}
+```
+
+---
+
+## Q20: Which OOP Concept Is Used Most in Spring Boot?
+
+### Answer
+
+All four are used.
+
+Examples:
+
+### Encapsulation
+
+```java
+@Entity
+```
+
+Private fields + getters/setters.
+
+### Abstraction
+
+```java
+JpaRepository
+```
+
+### Inheritance
+
+```java
+RuntimeException
+```
+
+hierarchy.
+
+### Polymorphism
+
+```java
+@Autowired
+```
+
+injects different implementations.
+
+---
+
+# Interviewer's Favorite Rapid Fire Questions
+
+### Can Constructor Be Final?
+
+No.
+
+---
+
+### Can Constructor Be Static?
+
+No.
+
+---
+
+### Can Abstract Class Have Static Methods?
+
+Yes.
+
+---
+
+### Can Interface Have Variables?
+
+Yes.
+
+All variables are:
+
+```java
+public static final
+```
+
+by default.
+
+---
+
+### Can We Instantiate Interface?
+
+No.
+
+---
+
+### Can Final Class Be Inherited?
+
+No.
+
+Example:
+
+```java
+String
+```
+
+is final.
+
+---
+
+### Can Final Method Be Overridden?
+
+No.
+
+---
+
+### Can We Have Multiple Interfaces?
+
+Yes.
+
+```java
+class Employee implements A, B, C {
+
+}
+```
+
+---
+
+# Most Asked OOP Interview Question
+
+### Why Does Java Support Multiple Inheritance Through Interfaces But Not Classes?
+
+### Answer
+
+To avoid Diamond Problem.
+
+Interfaces provide contracts, not implementation inheritance, so ambiguity is avoided.
