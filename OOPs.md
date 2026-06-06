@@ -1,6 +1,5 @@
 # What is OOP? Explain the Four Pillars of OOP with Real-World Examples.
 
-## Interview Answer (1-2 Minutes)
 
 Object-Oriented Programming (OOP) is a programming paradigm that organizes software around objects rather than functions.
 
