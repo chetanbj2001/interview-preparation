@@ -1074,7 +1074,496 @@ class Employee implements A, B, C {
 ### Why Does Java Support Multiple Inheritance Through Interfaces But Not Classes?
 
 ### Answer
-
+   
 To avoid Diamond Problem.
+  
+Interfaces provide contracts  , not implementation inheritance, so ambiguity is avoided.
 
-Interfaces provide contracts, not implementation inheritance, so ambiguity is avoided.
+
+
+# Method Overloading vs Method Overriding
+
+## Interview Answer
+
+Method Overloading means having multiple methods with the same name but different parameters within the same class.
+
+Method Overriding means redefining a parent class method in the child class with the same method signature.
+
+---
+
+# Method Overloading
+
+## Example
+
+```java
+class Calculator {
+
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+}
+```
+
+This is Method Overloading.
+
+---
+
+# Method Overriding
+
+## Example
+
+```java
+class Animal {
+
+    void sound() {
+        System.out.println("Animal Sound");
+    }
+}
+
+class Dog extends Animal {
+
+    @Override
+    void sound() {
+        System.out.println("Bark");
+    }
+}
+```
+
+This is Method Overriding.
+
+---
+
+# Difference
+
+| Feature | Overloading | Overriding |
+|----------|------------|------------|
+| Occurs In | Same Class | Parent & Child |
+| Parameters | Must Differ | Must Be Same |
+| Return Type | Can Differ | Must Be Compatible |
+| Polymorphism | Compile Time | Runtime |
+| Annotation | Not Required | @Override Recommended |
+
+---
+
+# Frequently Asked Questions
+
+## Can We Overload main() Method?
+
+### Answer
+
+Yes.
+
+```java
+public static void main(String[] args) {
+
+}
+
+public static void main(int a) {
+
+}
+```
+
+JVM only calls:
+
+```java
+main(String[] args)
+```
+
+---
+
+## Can Static Methods Be Overridden?
+
+### Answer
+
+No.
+
+Static methods are hidden, not overridden.
+
+---
+
+## Can Private Methods Be Overridden?
+
+### Answer
+
+No.
+
+Private methods are not inherited.
+
+---
+
+## Can Constructors Be Overloaded?
+
+### Answer
+
+Yes.
+
+---
+
+## Can Constructors Be Overridden?
+
+### Answer
+
+No.
+
+Constructors are not inherited.
+# Abstract Class vs Interface
+
+## Interview Answer
+
+Both Abstract Classes and Interfaces are used to achieve abstraction.
+
+Use Abstract Class when classes share common state and behavior.
+
+Use Interface when classes need to follow a common contract.
+
+---
+
+# Abstract Class Example
+
+```java
+abstract class Vehicle {
+
+    String brand;
+
+    abstract void start();
+
+    void stop() {
+        System.out.println("Stopped");
+    }
+}
+```
+
+---
+
+# Interface Example
+
+```java
+interface Vehicle {
+
+    void start();
+}
+```
+
+---
+
+# Difference Between Abstract Class and Interface
+
+| Feature | Abstract Class | Interface |
+|----------|---------------|-----------|
+| Constructor | Yes | No |
+| Instance Variables | Yes | No |
+| Multiple Inheritance | No | Yes |
+| Method Implementation | Yes | Yes (Java 8+) |
+| Access Modifier | Any | Public by default |
+| Keyword | extends | implements |
+
+---
+
+# When To Use Abstract Class?
+
+Use when:
+
+```text
+Classes share common code.
+```
+
+Example:
+
+```text
+Vehicle
+   |
+   +-- Car
+   +-- Bike
+```
+
+---
+
+# When To Use Interface?
+
+Use when:
+
+```text
+Different classes need same capability.
+```
+
+Example:
+
+```text
+Flyable
+```
+
+Implemented by:
+
+```text
+Bird
+Aeroplane
+Drone
+```
+
+---
+
+# Frequently Asked Questions
+
+## Can Interface Have Methods With Body?
+
+### Answer
+
+Yes.
+
+Since Java 8:
+
+```java
+default void test() {
+
+}
+```
+
+```java
+static void test() {
+
+}
+```
+
+---
+
+## Can Interface Have Private Methods?
+
+### Answer
+
+Yes.
+
+Since Java 9.
+
+---
+
+## Can Abstract Class Have Constructor?
+
+### Answer
+
+Yes.
+
+---
+
+## Can We Create Object Of Abstract Class?
+
+### Answer
+
+No.
+# IS-A vs HAS-A Relationship
+
+## IS-A Relationship
+
+Represents Inheritance.
+
+Example:
+
+```text
+Dog IS-A Animal
+```
+
+```java
+class Animal {
+
+}
+
+class Dog extends Animal {
+
+}
+```
+
+---
+
+# HAS-A Relationship
+
+Represents Composition/Aggregation.
+
+Example:
+
+```text
+Car HAS-A Engine
+```
+
+```java
+class Engine {
+
+}
+
+class Car {
+
+    private Engine engine;
+}
+```
+
+---
+
+# Difference
+
+| IS-A | HAS-A |
+|--------|--------|
+| Inheritance | Composition |
+| Tight Coupling | Loose Coupling |
+| extends Keyword | Object Reference |
+| Strong Relationship | Flexible Relationship |
+
+---
+
+# Interview Favorite Question
+
+## Which Is Preferred?
+
+### Answer
+
+HAS-A Relationship.
+
+Reason:
+
+```text
+Favor Composition Over Inheritance
+```
+
+Because it provides:
+
+- Loose Coupling
+- Better Testing
+- Better Maintainability
+# Association vs Aggregation vs Composition
+
+## Association
+
+A general relationship between two classes.
+
+Example:
+
+```text
+Teacher ↔ Student
+```
+
+Both can exist independently.
+
+---
+
+## Example
+
+```java
+class Teacher {
+
+}
+
+class Student {
+
+}
+```
+
+---
+
+# Aggregation
+
+A weak HAS-A relationship.
+
+Child can exist without Parent.
+
+Example:
+
+```text
+Department HAS-A Teacher
+```
+
+Teacher can exist even if Department is deleted.
+
+---
+
+## Example
+
+```java
+class Teacher {
+
+}
+
+class Department {
+
+    List<Teacher> teachers;
+}
+```
+
+---
+
+# Composition
+
+A strong HAS-A relationship.
+
+Child cannot exist without Parent.
+
+Example:
+
+```text
+House HAS-A Room
+```
+
+If House is destroyed:
+
+```text
+Room also ceases to exist.
+```
+
+---
+
+## Example
+
+```java
+class Room {
+
+}
+
+class House {
+
+    private Room room = new Room();
+}
+```
+
+---
+
+# Difference
+
+| Association | Aggregation | Composition |
+|------------|------------|------------|
+| General Relation | Weak HAS-A | Strong HAS-A |
+| Independent Objects | Child Independent | Child Dependent |
+| Ownership | No | Partial | Full |
+
+---
+
+# Real World Examples
+
+Association
+
+```text
+Doctor ↔ Patient
+```
+
+Aggregation
+
+```text
+Department → Employee
+```
+
+Composition
+
+```text
+House → Room
+```
+
+---
+
+# Interview Favorite Question
+
+## Which Is Stronger?
+
+### Answer
+
+Composition.
+
+Because child lifecycle depends on parent lifecycle.
