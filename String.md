@@ -1,6 +1,6 @@
 # What is String? Why is String Immutable in Java?
 
-## Interview Answer (1-2 Minutes)
+## 
 
 A String in Java is an object that represents a sequence of characters.
 
