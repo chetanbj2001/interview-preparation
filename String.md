@@ -399,7 +399,7 @@ String is an immutable, final class in Java whose value cannot be changed after 
 
 # What is String Constant Pool (SCP)? How Does It Work?
 
-## Interview Answer (1-2 Minutes)
+
 
 The String Constant Pool (SCP) is a special memory area inside the Heap where JVM stores String literals.
 
@@ -857,3 +857,476 @@ String Pool is stored inside Heap Memory.
 # One-Line Summary
 
 String Constant Pool is a special area in Heap that stores String literals and reuses existing objects to improve memory efficiency and performance.
+
+# Difference Between == and equals() in Java
+
+
+
+Both `==` and `equals()` are used for comparison in Java, but they work differently.
+
+- `==` compares memory references (addresses).
+- `equals()` compares actual content (values).
+
+For primitive data types:
+
+```java
+int a = 10;
+int b = 10;
+
+System.out.println(a == b);
+```
+
+Output:
+
+```text
+true
+```
+
+Because primitive values are compared directly.
+
+For objects:
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+```
+
+Output:
+
+```text
+false
+```
+
+Because both objects have different memory locations.
+
+---
+
+# == Operator
+
+## Definition
+
+The `==` operator compares references for objects.
+
+It checks whether both references point to the same memory location.
+
+---
+
+## Example
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+```
+
+Output:
+
+```text
+false
+```
+
+Memory:
+
+```text
+Heap
+
++--------+      +--------+
+| Java   |      | Java   |
++--------+      +--------+
+    ↑               ↑
+   s1              s2
+```
+
+Different objects.
+
+---
+
+# equals() Method
+
+## Definition
+
+The `equals()` method compares actual content.
+
+---
+
+## Example
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+
+System.out.println(s1.equals(s2));
+```
+
+Output:
+
+```text
+true
+```
+
+Because both Strings contain:
+
+```text
+Java
+```
+
+---
+
+# Example 1
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+
+System.out.println(s1 == s2);
+System.out.println(s1.equals(s2));
+```
+
+Output:
+
+```text
+true
+true
+```
+
+Reason:
+
+Both refer to same pooled object.
+
+---
+
+# Example 2
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+System.out.println(s1.equals(s2));
+```
+
+Output:
+
+```text
+false
+true
+```
+
+Reason:
+
+Different references but same content.
+
+---
+
+# Example 3
+
+```java
+String s1 = "Java";
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+System.out.println(s1.equals(s2));
+```
+
+Output:
+
+```text
+false
+true
+```
+
+Reason:
+
+Different memory locations.
+
+---
+
+# Why equals() Works For String?
+
+String class overrides Object class equals() method.
+
+Object class:
+
+```java
+public boolean equals(Object obj) {
+    return (this == obj);
+}
+```
+
+String class overrides it to compare character content.
+
+---
+
+# Custom Class Example
+
+Without overriding equals():
+
+```java
+class Employee {
+
+    int id;
+
+    Employee(int id) {
+        this.id = id;
+    }
+}
+```
+
+```java
+Employee e1 = new Employee(1);
+Employee e2 = new Employee(1);
+
+System.out.println(e1.equals(e2));
+```
+
+Output:
+
+```text
+false
+```
+
+Because Object class implementation compares references.
+
+---
+
+# After Overriding equals()
+
+```java
+class Employee {
+
+    int id;
+
+    Employee(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        Employee emp = (Employee) obj;
+
+        return this.id == emp.id;
+    }
+}
+```
+
+Now:
+
+```java
+Employee e1 = new Employee(1);
+Employee e2 = new Employee(1);
+
+System.out.println(e1.equals(e2));
+```
+
+Output:
+
+```text
+true
+```
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: What is the difference between == and equals()?
+
+### Answer
+
+```text
+==       → Reference Comparison
+equals() → Content Comparison
+```
+
+---
+
+## Q2: Can == Compare Strings?
+
+### Answer
+
+Yes.
+
+But it compares references, not content.
+
+---
+
+## Q3: Why Does String Override equals()?
+
+### Answer
+
+To compare actual character content instead of memory addresses.
+
+---
+
+## Q4: Can We Override == Operator?
+
+### Answer
+
+No.
+
+Java does not support operator overloading for ==.
+
+---
+
+## Q5: Can equals() Be Overridden?
+
+### Answer
+
+Yes.
+
+Many classes override equals().
+
+Example:
+
+```java
+String
+Integer
+Employee
+User
+```
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+What Will Be Output?
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+
+System.out.println(s1 == s2);
+```
+
+### Answer
+
+```text
+true
+```
+
+Because both point to same String Pool object.
+
+---
+
+## Question
+
+What Will Be Output?
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+```
+
+### Answer
+
+```text
+false
+```
+
+Different Heap objects.
+
+---
+
+## Question
+
+What Will Be Output?
+
+```java
+String s1 = "Java";
+String s2 = new String("Java");
+
+System.out.println(s1.equals(s2));
+```
+
+### Answer
+
+```text
+true
+```
+
+Contents are same.
+
+---
+
+## Question
+
+What Will Be Output?
+
+```java
+String s1 = null;
+
+System.out.println(s1.equals("Java"));
+```
+
+### Answer
+
+```text
+NullPointerException
+```
+
+---
+
+## Safer Approach
+
+```java
+System.out.println("Java".equals(s1));
+```
+
+Output:
+
+```text
+false
+```
+
+No exception.
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Which is Faster?
+
+```java
+==
+```
+
+or
+
+```java
+equals()
+```
+
+### Answer
+
+`==` is slightly faster because it compares references only.
+
+`equals()` compares content.
+
+However, use the correct operator based on requirement, not performance.
+
+---
+
+# Key Points For Revision
+
+- `==` compares references.
+- `equals()` compares content.
+- String overrides equals().
+- Object class equals() compares references.
+- equals() can be overridden.
+- `==` cannot be overridden.
+- Use `"value".equals(variable)` to avoid NullPointerException.
+
+---
+
+# One-Line Summary
+
+`==` checks whether two references point to the same object, whereas `equals()` checks whether two objects contain the same data.
