@@ -396,3 +396,464 @@ The benefits of immutability outweigh the memory cost.
 # One-Line Summary
 
 String is an immutable, final class in Java whose value cannot be changed after creation, making it secure, thread-safe, and memory efficient through String Pooling.
+
+# What is String Constant Pool (SCP)? How Does It Work?
+
+## Interview Answer (1-2 Minutes)
+
+The String Constant Pool (SCP) is a special memory area inside the Heap where JVM stores String literals.
+
+The main purpose of the String Pool is:
+
+- Memory Optimization
+- Reusability
+- Improved Performance
+
+When a String literal is created, JVM first checks whether the same String already exists in the String Pool.
+
+If it exists:
+
+```text
+Reuse Existing Object
+```
+
+If it does not exist:
+
+```text
+Create New Object
+```
+
+and store it in the String Pool.
+
+---
+
+# Example
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+   ↑
+  / \
+s1   s2
+```
+
+Both variables point to the same object.
+
+---
+
+# Proof
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+
+System.out.println(s1 == s2);
+```
+
+Output:
+
+```text
+true
+```
+
+Because both references point to the same object.
+
+---
+
+# Why Was String Pool Introduced?
+
+Suppose:
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+String s3 = "Java";
+String s4 = "Java";
+```
+
+Without String Pool:
+
+```text
+4 Objects
+```
+
+With String Pool:
+
+```text
+1 Object
+```
+
+This saves memory.
+
+---
+
+# How JVM Handles String Literals
+
+Example:
+
+```java
+String s1 = "Java";
+```
+
+Step 1:
+
+JVM checks String Pool.
+
+```text
+Does "Java" exist?
+```
+
+Step 2:
+
+If No:
+
+```text
+Create Object
+Store In Pool
+```
+
+Step 3:
+
+If Yes:
+
+```text
+Return Existing Reference
+```
+
+---
+
+# String Literal vs new String()
+
+This is one of the most asked interview questions.
+
+---
+
+## Using String Literal
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+```
+
+Only one object created.
+
+---
+
+## Using new String()
+
+```java
+String s1 = new String("Java");
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+
+Heap
+
++--------+
+| "Java" |
++--------+
+```
+
+Two objects are created.
+
+---
+
+# Example
+
+```java
+String s1 = "Java";
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+```
+
+Output:
+
+```text
+false
+```
+
+Reason:
+
+Different memory locations.
+
+---
+
+# How Many Objects Are Created?
+
+## Question 1
+
+```java
+String s = "Java";
+```
+
+Answer:
+
+```text
+1 Object
+```
+
+If not already present in pool.
+
+---
+
+## Question 2
+
+```java
+String s = new String("Java");
+```
+
+Answer:
+
+```text
+2 Objects
+```
+
+1 in String Pool
+
+1 in Heap
+
+---
+
+## Question 3
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+```
+
+Answer:
+
+```text
+1 Object
+```
+
+Because pool reuses object.
+
+---
+
+## Question 4
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+```
+
+Answer:
+
+```text
+3 Objects
+```
+
+1 in Pool
+
+2 in Heap
+
+---
+
+# What is intern() Method?
+
+The intern() method adds a String to the String Pool if it is not already present.
+
+Example:
+
+```java
+String s1 = new String("Java");
+
+String s2 = s1.intern();
+
+String s3 = "Java";
+```
+
+```java
+System.out.println(s2 == s3);
+```
+
+Output:
+
+```text
+true
+```
+
+Because both refer to the pooled String.
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: What is String Constant Pool?
+
+### Answer
+
+A special memory area in Heap where JVM stores String literals to avoid duplicate object creation.
+
+---
+
+## Q2: Why is String Pool Used?
+
+### Answer
+
+To save memory and improve performance.
+
+---
+
+## Q3: Where Is String Pool Stored?
+
+### Answer
+
+Inside Heap Memory.
+
+(Java 7 onwards)
+
+---
+
+## Q4: What is intern() Method?
+
+### Answer
+
+It returns the reference from the String Pool.
+
+---
+
+## Q5: Which Is Better?
+
+```java
+String s = "Java";
+```
+
+or
+
+```java
+String s = new String("Java");
+```
+
+### Answer
+
+String Literal.
+
+Because it utilizes the String Pool.
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+What Will Be Output?
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+
+System.out.println(s1 == s2);
+```
+
+### Answer
+
+```text
+true
+```
+
+Same pooled object.
+
+---
+
+## Question
+
+What Will Be Output?
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+```
+
+### Answer
+
+```text
+false
+```
+
+Different Heap objects.
+
+---
+
+## Question
+
+What Will Be Output?
+
+```java
+String s1 = "Java";
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+```
+
+### Answer
+
+```text
+false
+```
+
+Different memory locations.
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Is String Pool Stored In Stack Memory?
+
+### Answer
+
+No.
+
+String Pool is stored inside Heap Memory.
+
+(Java 7+)
+
+---
+
+# Key Points For Revision
+
+- String Pool stores String literals.
+- Duplicate literals reuse existing objects.
+- String Pool saves memory.
+- String literals are preferred over new String().
+- intern() returns pooled reference.
+- String Pool resides in Heap.
+
+---
+
+# One-Line Summary
+
+String Constant Pool is a special area in Heap that stores String literals and reuses existing objects to improve memory efficiency and performance.
