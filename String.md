@@ -1330,3 +1330,519 @@ However, use the correct operator based on requirement, not performance.
 # One-Line Summary
 
 `==` checks whether two references point to the same object, whereas `equals()` checks whether two objects contain the same data.
+
+# Difference Between String, StringBuilder, and StringBuffer
+
+
+String, StringBuilder, and StringBuffer are all used to represent and manipulate character sequences in Java.
+
+The main difference is:
+
+- String is immutable.
+- StringBuilder is mutable and not thread-safe.
+- StringBuffer is mutable and thread-safe.
+
+If frequent modifications are required, StringBuilder or StringBuffer should be preferred over String.
+
+---
+
+# String
+
+## Definition
+
+String is an immutable class.
+
+Once created, its value cannot be changed.
+
+---
+
+## Example
+
+```java
+String str = "Java";
+
+str.concat(" Programming");
+
+System.out.println(str);
+```
+
+Output:
+
+```text
+Java
+```
+
+Reason:
+
+A new object is created but not assigned.
+
+---
+
+## Internal Working
+
+```java
+String str = "Java";
+
+str = str + "8";
+```
+
+Memory:
+
+```text
+Java
+  ↓
+Create New Object
+  ↓
+Java8
+```
+
+Every modification creates a new object.
+
+---
+
+# StringBuilder
+
+## Definition
+
+StringBuilder is a mutable class introduced in Java 5.
+
+Changes happen on the same object.
+
+It is not synchronized.
+
+Therefore:
+
+```text
+Not Thread Safe
+```
+
+---
+
+## Example
+
+```java
+StringBuilder sb = new StringBuilder("Java");
+
+sb.append(" Programming");
+
+System.out.println(sb);
+```
+
+Output:
+
+```text
+Java Programming
+```
+
+Same object gets modified.
+
+---
+
+# StringBuffer
+
+## Definition
+
+StringBuffer is a mutable class.
+
+It is synchronized.
+
+Therefore:
+
+```text
+Thread Safe
+```
+
+---
+
+## Example
+
+```java
+StringBuffer sb = new StringBuffer("Java");
+
+sb.append(" Programming");
+
+System.out.println(sb);
+```
+
+Output:
+
+```text
+Java Programming
+```
+
+---
+
+# Why Were StringBuilder and StringBuffer Introduced?
+
+Consider:
+
+```java
+String str = "";
+
+for(int i=0;i<1000;i++) {
+    str += i;
+}
+```
+
+Every iteration creates a new String object.
+
+Result:
+
+```text
+High Memory Usage
+Poor Performance
+```
+
+Solution:
+
+```java
+StringBuilder
+```
+
+or
+
+```java
+StringBuffer
+```
+
+---
+
+# Difference Between String, StringBuilder, and StringBuffer
+
+| Feature | String | StringBuilder | StringBuffer |
+|----------|----------|----------|----------|
+| Mutable | No | Yes | Yes |
+| Thread Safe | Yes | No | Yes |
+| Performance | Slow | Fastest | Slower than StringBuilder |
+| Synchronization | Not Required | No | Yes |
+| Introduced In | Java 1.0 | Java 5 | Java 1.0 |
+
+---
+
+# Memory Example
+
+## String
+
+```java
+String str = "Java";
+
+str += "8";
+```
+
+Memory:
+
+```text
+Java
+ ↓
+Java8
+```
+
+New object created.
+
+---
+
+## StringBuilder
+
+```java
+StringBuilder sb = new StringBuilder("Java");
+
+sb.append("8");
+```
+
+Memory:
+
+```text
+Java
+ ↓
+Modify Same Object
+ ↓
+Java8
+```
+
+No new object.
+
+---
+
+# Performance Comparison
+
+Example:
+
+```java
+for(int i=0;i<100000;i++) {
+}
+```
+
+Appending data:
+
+```java
+StringBuilder
+```
+
+is fastest because:
+
+```text
+No Synchronization
+Mutable
+```
+
+---
+
+# When Should We Use String?
+
+Use when:
+
+```text
+Data will not change frequently.
+```
+
+Example:
+
+```java
+String name = "Chetan";
+```
+
+---
+
+# When Should We Use StringBuilder?
+
+Use when:
+
+```text
+Frequent modifications
+Single Threaded Application
+```
+
+Example:
+
+```java
+Generating Reports
+Building SQL Queries
+Building JSON Responses
+```
+
+---
+
+# When Should We Use StringBuffer?
+
+Use when:
+
+```text
+Frequent modifications
+Multi-Threaded Application
+```
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: Why is StringBuilder Faster Than String?
+
+### Answer
+
+Because StringBuilder modifies the same object.
+
+String creates a new object for every modification.
+
+---
+
+## Q2: Why is StringBuilder Faster Than StringBuffer?
+
+### Answer
+
+StringBuilder is not synchronized.
+
+No locking overhead.
+
+---
+
+## Q3: Which Is Thread Safe?
+
+### Answer
+
+```java
+StringBuffer
+```
+
+---
+
+## Q4: Is String Thread Safe?
+
+### Answer
+
+Yes.
+
+Because String is immutable.
+
+---
+
+## Q5: Which Is Faster?
+
+### Answer
+
+```text
+StringBuilder > StringBuffer > String
+```
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+What Will Be Output?
+
+```java
+String str = "Java";
+
+str.concat("8");
+
+System.out.println(str);
+```
+
+### Answer
+
+```text
+Java
+```
+
+String is immutable.
+
+---
+
+## Question
+
+What Will Be Output?
+
+```java
+StringBuilder sb = new StringBuilder("Java");
+
+sb.append("8");
+
+System.out.println(sb);
+```
+
+### Answer
+
+```text
+Java8
+```
+
+Same object modified.
+
+---
+
+## Question
+
+Which Class Should Be Used For String Concatenation Inside Loops?
+
+### Answer
+
+```java
+StringBuilder
+```
+
+---
+
+## Question
+
+Why Is StringBuffer Slower?
+
+### Answer
+
+Because methods are synchronized.
+
+Example:
+
+```java
+public synchronized StringBuffer append(String str)
+```
+
+Synchronization adds overhead.
+
+---
+
+## Question
+
+Can StringBuilder Be Used In Multithreading?
+
+### Answer
+
+Yes.
+
+But it is not thread-safe.
+
+External synchronization is required.
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Which One Should Always Be Preferred?
+
+### Wrong Answer
+
+```text
+StringBuilder
+```
+
+### Correct Answer
+
+Depends on the use case.
+
+```text
+No Modification → String
+
+Frequent Modification + Single Thread → StringBuilder
+
+Frequent Modification + Multi Thread → StringBuffer
+```
+
+---
+
+# Real Project Examples
+
+## String
+
+```java
+String username = "admin";
+```
+
+---
+
+## StringBuilder
+
+```java
+StringBuilder query = new StringBuilder();
+
+query.append("SELECT * FROM EMPLOYEE");
+```
+
+---
+
+## StringBuffer
+
+```java
+Shared Log Message Generation
+Shared Report Generation
+```
+
+Multi-threaded environment.
+
+---
+
+# Key Points For Revision
+
+- String is immutable.
+- StringBuilder is mutable and not thread-safe.
+- StringBuffer is mutable and thread-safe.
+- StringBuilder is faster than StringBuffer.
+- Use StringBuilder for frequent modifications.
+- Use StringBuffer in multi-threaded scenarios.
+
+---
+
+# One-Line Summary
+
+String is immutable, StringBuilder is mutable and fast, while StringBuffer is mutable and thread-safe due to synchronization.
