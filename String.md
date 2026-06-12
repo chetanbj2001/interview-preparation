@@ -1846,3 +1846,376 @@ Multi-threaded environment.
 # One-Line Summary
 
 String is immutable, StringBuilder is mutable and fast, while StringBuffer is mutable and thread-safe due to synchronization.
+
+# Difference Between String Literal and new String() in Java
+
+In Java, Strings can be created in two ways:
+
+1. Using String Literal
+2. Using new String() Keyword
+
+The main difference is:
+
+- String Literal uses the String Constant Pool.
+- new String() creates a new object in Heap memory.
+
+String literals are preferred because they save memory by reusing existing objects from the String Pool.
+
+---
+
+# String Literal
+
+## Example
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+```
+
+JVM first checks the String Pool.
+
+If the String already exists:
+
+```text
+Reuse Existing Object
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+   ↑
+  / \
+s1   s2
+```
+
+Only one object is created.
+
+---
+
+# new String()
+
+## Example
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+
+Heap
+
++--------+
+| "Java" |
++--------+
+
++--------+
+| "Java" |
++--------+
+```
+
+Each call creates a new Heap object.
+
+---
+
+# Comparison Example
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+
+System.out.println(s1 == s2);
+```
+
+Output:
+
+```text
+true
+```
+
+Reason:
+
+Both references point to same pooled object.
+
+---
+
+# Example Using new String()
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+```
+
+Output:
+
+```text
+false
+```
+
+Reason:
+
+Both references point to different Heap objects.
+
+---
+
+# Why String Literal Is Preferred?
+
+## Memory Efficient
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+String s3 = "Java";
+```
+
+Only one object exists in memory.
+
+---
+
+## Better Performance
+
+No unnecessary object creation.
+
+Object reuse improves performance.
+
+---
+
+# Internal Working
+
+## String Literal
+
+```java
+String s = "Java";
+```
+
+JVM:
+
+```text
+1. Check String Pool
+2. If Present → Reuse
+3. If Not Present → Create
+```
+
+---
+
+## new String()
+
+```java
+String s = new String("Java");
+```
+
+JVM:
+
+```text
+1. Check String Pool
+2. Create Object In Pool (if absent)
+3. Create New Object In Heap
+4. Return Heap Reference
+```
+
+---
+
+# Difference Between String Literal and new String()
+
+| Feature | String Literal | new String() |
+|----------|----------|----------|
+| Memory Location | String Pool | Heap |
+| Object Reuse | Yes | No |
+| Memory Efficient | Yes | No |
+| Performance | Better | Slightly Slower |
+| Recommended | Yes | Usually No |
+
+---
+
+# Real-World Example
+
+## Preferred
+
+```java
+String role = "ADMIN";
+```
+
+Reason:
+
+Fixed values should use String Pool.
+
+---
+
+## Less Common
+
+```java
+String role = new String("ADMIN");
+```
+
+Creates unnecessary object.
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: Which Is Better?
+
+```java
+String s = "Java";
+```
+
+or
+
+```java
+String s = new String("Java");
+```
+
+### Answer
+
+String Literal.
+
+Because it uses String Pool and saves memory.
+
+---
+
+## Q2: Where Is String Literal Stored?
+
+### Answer
+
+String Constant Pool.
+
+---
+
+## Q3: Where Is new String() Object Stored?
+
+### Answer
+
+Heap Memory.
+
+---
+
+## Q4: Does new String() Use String Pool?
+
+### Answer
+
+Yes.
+
+But it additionally creates a new Heap object.
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+What Will Be Output?
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+
+System.out.println(s1 == s2);
+```
+
+### Answer
+
+```text
+true
+```
+
+Same pooled object.
+
+---
+
+## Question
+
+What Will Be Output?
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+```
+
+### Answer
+
+```text
+false
+```
+
+Different Heap objects.
+
+---
+
+## Question
+
+What Will Be Output?
+
+```java
+String s1 = "Java";
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+```
+
+### Answer
+
+```text
+false
+```
+
+Different memory locations.
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Does new String("Java") Create Only One Object?
+
+### Answer
+
+No.
+
+Generally:
+
+```text
+1 Object In String Pool
+1 Object In Heap
+```
+
+Total:
+
+```text
+2 Objects
+```
+
+(If "Java" is not already present in the Pool.)
+
+---
+
+# Key Points For Revision
+
+- String Literal uses String Pool.
+- new String() creates Heap object.
+- String Literal is memory efficient.
+- String Literal is preferred.
+- new String() may create two objects.
+- String Pool avoids duplicate object creation.
+
+---
+
+# One-Line Summary
+
+String literals reuse objects from the String Constant Pool, while new String() always creates a new object in Heap memory.
