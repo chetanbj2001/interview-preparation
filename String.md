@@ -2732,3 +2732,654 @@ because Pool object already exists.
 # One-Line Summary
 
 The number of String objects created depends on whether the String already exists in the String Pool and whether the String is created using literals, new String(), or concatenation.
+
+# What is intern() Method in Java?
+
+## Interview Answer (1-2 Minutes)
+
+The `intern()` method returns the reference of a String from the String Constant Pool.
+
+If the String already exists in the pool, JVM returns the existing pooled reference.
+
+If it does not exist, JVM adds it to the pool and returns the pooled reference.
+
+The main purpose of `intern()` is memory optimization by avoiding duplicate String objects.
+
+---
+
+## Example
+
+```java
+String s1 = new String("Java");
+
+String s2 = s1.intern();
+
+String s3 = "Java";
+
+System.out.println(s2 == s3);
+```
+
+### Output
+
+```text
+true
+```
+
+---
+
+## Internal Working
+
+```java
+String s1 = new String("Java");
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+
+Heap
+
++--------+
+| "Java" |
++--------+
+```
+
+When:
+
+```java
+String s2 = s1.intern();
+```
+
+JVM returns:
+
+```text
+Reference of pooled "Java"
+```
+
+No new object is created.
+
+---
+
+## Frequently Asked Interview Questions
+
+### Q1: What is intern() Method?
+
+**Answer:**
+
+Returns the String reference from the String Constant Pool.
+
+---
+
+### Q2: Does intern() Create a New Object?
+
+**Answer:**
+
+No.
+
+It returns the pooled reference.
+
+---
+
+### Q3: Why is intern() Used?
+
+**Answer:**
+
+* Memory Optimization
+* Object Reusability
+* Reduced Heap Usage
+
+---
+
+## Tricky Interview Question
+
+```java
+String s1 = new String("Java");
+
+String s2 = s1.intern();
+
+String s3 = "Java";
+
+System.out.println(s2 == s3);
+```
+
+### Output
+
+```text
+true
+```
+
+Because both references point to the same pooled object.
+
+---
+
+## Key Points For Revision
+
+* intern() returns pooled reference.
+* Used for memory optimization.
+* Avoids duplicate String objects.
+* Works with String Constant Pool.
+
+---
+
+## One-Line Summary
+
+The `intern()` method returns the reference of a String from the String Constant Pool, helping reduce memory usage by reusing existing String objects.
+# How String Concatenation Works Internally?
+
+## Interview Answer (1-2 Minutes)
+
+String concatenation means combining multiple Strings into a single String.
+
+For compile-time constants, Java performs optimization during compilation.
+
+For runtime concatenation, JVM internally uses `StringBuilder`.
+
+---
+
+## Compile-Time Concatenation
+
+```java
+String s = "Java" + "8";
+```
+
+Compiler converts it to:
+
+```java
+String s = "Java8";
+```
+
+Only one object is created.
+
+---
+
+## Runtime Concatenation
+
+```java
+String s1 = "Java";
+
+String s2 = s1 + "8";
+```
+
+Internally:
+
+```java
+StringBuilder sb = new StringBuilder();
+
+sb.append(s1);
+
+sb.append("8");
+
+String s2 = sb.toString();
+```
+
+---
+
+## Why StringBuilder?
+
+Because String is immutable.
+
+Without StringBuilder, every concatenation would create multiple String objects.
+
+---
+
+## Frequently Asked Interview Questions
+
+### Q1: Does JVM use StringBuilder internally?
+
+**Answer:** Yes, for runtime concatenation.
+
+### Q2: Which is better inside loops?
+
+```java
+StringBuilder
+```
+
+---
+
+## Tricky Interview Question
+
+```java
+String s1 = "Ja" + "va";
+
+String s2 = "Java";
+
+System.out.println(s1 == s2);
+```
+
+Output:
+
+```text
+true
+```
+
+Reason:
+
+Compile-time optimization.
+
+---
+
+## Key Points For Revision
+
+* Compile-time concatenation is optimized.
+* Runtime concatenation uses StringBuilder.
+* StringBuilder improves performance.
+
+---
+
+## One-Line Summary
+
+Java uses compile-time optimization for constants and StringBuilder for runtime String concatenation.
+
+---
+
+# Why is String Final?
+
+## Interview Answer (1-2 Minutes)
+
+String class is declared as:
+
+```java
+public final class String
+```
+
+A final class cannot be inherited.
+
+Java designers made String final to preserve:
+
+* Immutability
+* Security
+* Thread Safety
+
+---
+
+## Why Not Allow Inheritance?
+
+Suppose inheritance was allowed:
+
+```java
+class MyString extends String
+```
+
+Child class could modify String behavior.
+
+This would break immutability.
+
+---
+
+## Frequently Asked Interview Questions
+
+### Q1: Can String Be Inherited?
+
+**Answer:** No.
+
+Because String is final.
+
+---
+
+### Q2: Why is String Final?
+
+**Answer:**
+
+* Security
+* Immutability
+* Thread Safety
+
+---
+
+## Key Points For Revision
+
+* String is final.
+* Cannot be extended.
+* Helps maintain immutability.
+
+---
+
+## One-Line Summary
+
+String is declared final to prevent inheritance and preserve immutability.
+
+---
+
+# Why Are Passwords Stored as char[] Instead of String?
+
+## Interview Answer (1-2 Minutes)
+
+Passwords should be stored as `char[]` instead of String because Strings are immutable.
+
+A String remains in memory until Garbage Collection occurs.
+
+Sensitive information may remain exposed in memory.
+
+---
+
+## Bad Example
+
+```java
+String password = "admin123";
+```
+
+Password remains in memory.
+
+---
+
+## Better Example
+
+```java
+char[] password = {'a','d','m','i','n'};
+```
+
+After usage:
+
+```java
+Arrays.fill(password, '*');
+```
+
+Sensitive data is removed.
+
+---
+
+## Frequently Asked Interview Questions
+
+### Q1: Why Not Use String?
+
+**Answer:**
+
+String is immutable and cannot be cleared.
+
+---
+
+### Q2: Why Use char[]?
+
+**Answer:**
+
+Because it can be modified and cleared.
+
+---
+
+## Key Points For Revision
+
+* String is immutable.
+* char[] is mutable.
+* Passwords should be erasable from memory.
+
+---
+
+## One-Line Summary
+
+Passwords are stored as char[] because char[] can be cleared from memory after use.
+
+---
+
+# Why is String Used as a Key in HashMap?
+
+## Interview Answer (1-2 Minutes)
+
+String is an ideal HashMap key because it is:
+
+* Immutable
+* Final
+* Provides stable hashCode()
+* Provides reliable equals()
+
+HashMap relies on:
+
+```java
+hashCode()
+equals()
+```
+
+for storing and retrieving values.
+
+---
+
+## Example
+
+```java
+Map<String, Integer> map = new HashMap<>();
+
+map.put("Java", 100);
+```
+
+HashMap calculates:
+
+```java
+"Java".hashCode()
+```
+
+to find the bucket.
+
+---
+
+## Why Immutability Matters?
+
+If String were mutable:
+
+```java
+String key = "Java";
+```
+
+could become:
+
+```java
+key = "Python";
+```
+
+Hash code would change.
+
+HashMap lookup would fail.
+
+---
+
+## Frequently Asked Interview Questions
+
+### Q1: Why is String the most common HashMap key?
+
+**Answer:**
+
+* Immutable
+* Cached hashCode
+* Reliable equals
+
+---
+
+### Q2: Can Mutable Objects Be HashMap Keys?
+
+**Answer:** Yes.
+
+But not recommended.
+
+---
+
+## Key Points For Revision
+
+* HashMap uses hashCode and equals.
+* String provides stable hashCode.
+* Immutability prevents lookup issues.
+
+---
+
+## One-Line Summary
+
+String is a perfect HashMap key because its immutable nature guarantees consistent hashCode values.
+
+---
+
+# Most Asked Tricky String Interview Questions
+
+## Question 1
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+
+System.out.println(s1 == s2);
+```
+
+### Output
+
+```text
+true
+```
+
+---
+
+## Question 2
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+
+System.out.println(s1 == s2);
+```
+
+### Output
+
+```text
+false
+```
+
+---
+
+## Question 3
+
+```java
+String s1 = "Java";
+String s2 = new String("Java");
+
+System.out.println(s1.equals(s2));
+```
+
+### Output
+
+```text
+true
+```
+
+---
+
+## Question 4
+
+```java
+String s1 = "Ja" + "va";
+
+String s2 = "Java";
+
+System.out.println(s1 == s2);
+```
+
+### Output
+
+```text
+true
+```
+
+---
+
+## Question 5
+
+```java
+String s1 = "Ja";
+
+String s2 = s1 + "va";
+
+String s3 = "Java";
+
+System.out.println(s2 == s3);
+```
+
+### Output
+
+```text
+false
+```
+
+---
+
+## Question 6
+
+```java
+String s1 = new String("Java");
+
+String s2 = s1.intern();
+
+String s3 = "Java";
+
+System.out.println(s2 == s3);
+```
+
+### Output
+
+```text
+true
+```
+
+---
+
+## Question 7
+
+```java
+String s = null;
+
+System.out.println(s.equals("Java"));
+```
+
+### Output
+
+```text
+NullPointerException
+```
+
+Safe approach:
+
+```java
+"Java".equals(s);
+```
+
+Output:
+
+```text
+false
+```
+
+---
+
+# Final String Revision Sheet
+
+## Quick Revision
+
+```text
+String -> Immutable
+
+String Pool -> Stores Literals
+
+== -> Reference Comparison
+
+equals() -> Content Comparison
+
+StringBuilder -> Mutable, Fast
+
+StringBuffer -> Mutable, Thread Safe
+
+Literal -> Uses Pool
+
+new String() -> Creates Heap Object
+
+intern() -> Returns Pool Reference
+
+String is Final
+
+Password -> char[]
+
+HashMap Key -> String because Immutable
+```
+
+# String.md Status
+
+```text
+String.md ✅ COMPLETE
+```
