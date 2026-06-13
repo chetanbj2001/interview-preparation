@@ -2219,3 +2219,516 @@ Total:
 # One-Line Summary
 
 String literals reuse objects from the String Constant Pool, while new String() always creates a new object in Heap memory.
+# How Many Objects Are Created in String?
+
+
+This is one of the most popular Java interview questions.
+
+The number of String objects created depends on:
+
+- Whether the String already exists in the String Pool
+- Whether String Literal or new String() is used
+
+To answer correctly, we must understand:
+
+```text
+String Pool
++
+Heap Memory
+```
+
+and how JVM creates String objects.
+
+---
+
+# Scenario 1
+
+## Code
+
+```java
+String s = "Java";
+```
+
+## Objects Created
+
+```text
+1 Object
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+```
+
+If "Java" does not already exist in the pool.
+
+---
+
+# Scenario 2
+
+## Code
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+```
+
+## Objects Created
+
+```text
+1 Object
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+   ↑
+  / \
+s1   s2
+```
+
+JVM reuses the existing pooled object.
+
+---
+
+# Scenario 3
+
+## Code
+
+```java
+String s = new String("Java");
+```
+
+## Objects Created
+
+```text
+2 Objects
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+
+Heap
+
++--------+
+| "Java" |
++--------+
+```
+
+Explanation:
+
+1. JVM creates "Java" in String Pool (if not already present)
+2. JVM creates another object in Heap
+3. Reference points to Heap object
+
+---
+
+# Scenario 4
+
+## Code
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+```
+
+## Objects Created
+
+```text
+3 Objects
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+
+Heap
+
++--------+
+| "Java" |
++--------+
+
++--------+
+| "Java" |
++--------+
+```
+
+Explanation:
+
+```text
+1 Object in Pool
+2 Objects in Heap
+```
+
+Total:
+
+```text
+3 Objects
+```
+
+---
+
+# Scenario 5
+
+## Code
+
+```java
+String s1 = "Java";
+String s2 = new String("Java");
+```
+
+## Objects Created
+
+```text
+2 Objects
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+
+Heap
+
++--------+
+| "Java" |
++--------+
+```
+
+Explanation:
+
+```text
+1 Pool Object
+1 Heap Object
+```
+
+---
+
+# Scenario 6
+
+## Code
+
+```java
+String s1 = new String("Java");
+String s2 = s1.intern();
+```
+
+## Objects Created
+
+```text
+2 Objects
+```
+
+Memory:
+
+```text
+String Pool
+
++--------+
+| "Java" |
++--------+
+
+Heap
+
++--------+
+| "Java" |
++--------+
+```
+
+intern() does not create a new object.
+
+It simply returns the pooled reference.
+
+---
+
+# Scenario 7
+
+## Code
+
+```java
+String s1 = "Ja";
+String s2 = "va";
+
+String s3 = "Java";
+```
+
+## Objects Created
+
+```text
+3 Objects
+```
+
+Memory:
+
+```text
+"Ja"
+"va"
+"Java"
+```
+
+All stored in String Pool.
+
+---
+
+# Scenario 8
+
+## Code
+
+```java
+String s1 = "Ja" + "va";
+```
+
+## Objects Created
+
+```text
+1 Object
+```
+
+Reason:
+
+Compiler performs optimization.
+
+Compile-time conversion:
+
+```java
+String s1 = "Java";
+```
+
+---
+
+# Scenario 9
+
+## Code
+
+```java
+String s1 = "Ja";
+
+String s2 = s1 + "va";
+```
+
+## Objects Created
+
+More than one object.
+
+Reason:
+
+Concatenation happens at runtime.
+
+Internally JVM uses:
+
+```java
+StringBuilder
+```
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: How Many Objects Are Created?
+
+```java
+String s = "Java";
+```
+
+### Answer
+
+```text
+1 Object
+```
+
+---
+
+## Q2: How Many Objects Are Created?
+
+```java
+String s = new String("Java");
+```
+
+### Answer
+
+```text
+2 Objects
+```
+
+(If not already present in String Pool)
+
+---
+
+## Q3: How Many Objects Are Created?
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+```
+
+### Answer
+
+```text
+1 Object
+```
+
+---
+
+## Q4: How Many Objects Are Created?
+
+```java
+String s1 = new String("Java");
+String s2 = new String("Java");
+```
+
+### Answer
+
+```text
+3 Objects
+```
+
+---
+
+## Q5: Does intern() Create New Object?
+
+### Answer
+
+No.
+
+It returns a reference from String Pool.
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+How Many Objects Are Created?
+
+```java
+String s1 = "Java";
+String s2 = new String("Java");
+```
+
+### Answer
+
+```text
+2 Objects
+```
+
+---
+
+## Question
+
+How Many Objects Are Created?
+
+```java
+String s1 = "Java";
+String s2 = "Java";
+String s3 = "Java";
+```
+
+### Answer
+
+```text
+1 Object
+```
+
+---
+
+## Question
+
+How Many Objects Are Created?
+
+```java
+String s1 = "Ja" + "va";
+```
+
+### Answer
+
+```text
+1 Object
+```
+
+Compiler optimization.
+
+---
+
+## Question
+
+How Many Objects Are Created?
+
+```java
+String s1 = "Ja";
+
+String s2 = s1 + "va";
+```
+
+### Answer
+
+Runtime concatenation occurs.
+
+Additional objects may be created internally using StringBuilder.
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Is the Answer Always "2 Objects" for new String()?
+
+### Answer
+
+No.
+
+If the String already exists in the Pool:
+
+```java
+new String("Java");
+```
+
+creates only:
+
+```text
+1 New Heap Object
+```
+
+because Pool object already exists.
+
+---
+
+# Key Points For Revision
+
+- String literals use String Pool.
+- Duplicate literals do not create new objects.
+- new String() creates Heap object.
+- intern() does not create new object.
+- Compile-time concatenation is optimized.
+- Runtime concatenation creates extra objects.
+
+---
+
+# One-Line Summary
+
+The number of String objects created depends on whether the String already exists in the String Pool and whether the String is created using literals, new String(), or concatenation.
