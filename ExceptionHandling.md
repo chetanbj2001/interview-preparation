@@ -1,7 +1,5 @@
 # What is Exception Handling in Java?
 
-## Interview Answer (1-2 Minutes)
-
 Exception Handling is a mechanism in Java used to handle runtime errors gracefully so that the normal flow of the application is not interrupted.
 
 Instead of terminating the program abruptly, Java provides constructs such as:
@@ -320,3 +318,376 @@ Throwable
 # One-Line Summary
 
 Exception Handling is a Java mechanism that allows applications to handle runtime errors gracefully and continue normal execution.
+
+# Checked Exception vs Unchecked Exception
+
+In Java, exceptions are categorized into:
+
+1. Checked Exceptions
+2. Unchecked Exceptions
+
+The main difference is:
+
+```text
+Checked Exceptions → Checked at Compile Time
+
+Unchecked Exceptions → Occur at Runtime
+```
+
+Checked exceptions must be handled using:
+
+```java
+try-catch
+```
+
+or
+
+```java
+throws
+```
+
+Unchecked exceptions are not checked by the compiler.
+
+---
+
+# Checked Exceptions
+
+## Definition
+
+Exceptions checked by the compiler during compilation.
+
+If not handled, code will not compile.
+
+---
+
+## Example
+
+```java
+import java.io.*;
+
+public class Test {
+
+    public static void main(String[] args) {
+
+        FileReader file = new FileReader("test.txt");
+    }
+}
+```
+
+Compilation Error:
+
+```text
+Unhandled exception type FileNotFoundException
+```
+
+---
+
+## Solution
+
+```java
+try {
+
+    FileReader file = new FileReader("test.txt");
+
+} catch (FileNotFoundException e) {
+
+    e.printStackTrace();
+}
+```
+
+---
+
+# Common Checked Exceptions
+
+```java
+IOException
+SQLException
+ClassNotFoundException
+FileNotFoundException
+InterruptedException
+```
+
+---
+
+# Unchecked Exceptions
+
+## Definition
+
+Exceptions not checked by compiler.
+
+They occur during program execution.
+
+Also called:
+
+```text
+Runtime Exceptions
+```
+
+---
+
+## Example
+
+```java
+int result = 10 / 0;
+```
+
+Output:
+
+```text
+ArithmeticException
+```
+
+Code compiles successfully.
+
+Exception occurs at runtime.
+
+---
+
+# Common Unchecked Exceptions
+
+```java
+NullPointerException
+ArithmeticException
+ArrayIndexOutOfBoundsException
+NumberFormatException
+ClassCastException
+```
+
+---
+
+# Exception Hierarchy
+
+```text
+Throwable
+   |
+   +---- Exception
+            |
+            +---- RuntimeException
+                      |
+                      +---- Unchecked Exceptions
+            |
+            +---- Checked Exceptions
+```
+
+---
+
+# Difference Between Checked and Unchecked Exceptions
+
+| Feature | Checked Exception | Unchecked Exception |
+|----------|----------|----------|
+| Checked By | Compiler | JVM |
+| Occurs At | Compile Time | Runtime |
+| Handling Required | Yes | No |
+| Parent Class | Exception | RuntimeException |
+| Example | IOException | NullPointerException |
+
+---
+
+# Real World Example
+
+## Checked Exception
+
+```text
+Opening a File
+```
+
+File may not exist.
+
+Compiler forces handling.
+
+---
+
+## Unchecked Exception
+
+```text
+Divide By Zero
+```
+
+Programming mistake.
+
+Developer should fix code.
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: What is Checked Exception?
+
+### Answer
+
+An exception checked by compiler during compilation.
+
+Handling is mandatory.
+
+---
+
+## Q2: What is Unchecked Exception?
+
+### Answer
+
+An exception that occurs at runtime.
+
+Handling is optional.
+
+---
+
+## Q3: Parent Class of Unchecked Exceptions?
+
+### Answer
+
+```java
+RuntimeException
+```
+
+---
+
+## Q4: Is NullPointerException Checked?
+
+### Answer
+
+No.
+
+It is an unchecked exception.
+
+---
+
+## Q5: Is IOException Checked?
+
+### Answer
+
+Yes.
+
+Compiler forces handling.
+
+---
+
+## Q6: Can We Catch Unchecked Exceptions?
+
+### Answer
+
+Yes.
+
+```java
+try {
+    // code
+} catch (RuntimeException e) {
+
+}
+```
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+Will This Compile?
+
+```java
+FileReader file = new FileReader("test.txt");
+```
+
+### Answer
+
+No.
+
+FileNotFoundException must be handled.
+
+---
+
+## Question
+
+Will This Compile?
+
+```java
+int result = 10 / 0;
+```
+
+### Answer
+
+Yes.
+
+ArithmeticException occurs at runtime.
+
+---
+
+## Question
+
+Is RuntimeException Checked or Unchecked?
+
+### Answer
+
+Unchecked.
+
+All subclasses of RuntimeException are unchecked.
+
+---
+
+## Question
+
+Can We Create Our Own Checked Exception?
+
+### Answer
+
+Yes.
+
+```java
+class InvalidAgeException extends Exception {
+
+}
+```
+
+---
+
+## Question
+
+Can We Create Our Own Unchecked Exception?
+
+### Answer
+
+Yes.
+
+```java
+class InvalidAgeException extends RuntimeException {
+
+}
+```
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Are All Exceptions Checked?
+
+### Answer
+
+No.
+
+RuntimeException and its subclasses are unchecked.
+
+Examples:
+
+```java
+NullPointerException
+ArithmeticException
+ArrayIndexOutOfBoundsException
+```
+
+---
+
+# Key Points For Revision
+
+- Checked Exceptions are checked by compiler.
+- Unchecked Exceptions occur at runtime.
+- Checked Exceptions must be handled.
+- RuntimeException and its subclasses are unchecked.
+- IOException is checked.
+- NullPointerException is unchecked.
+
+---
+
+# One-Line Summary
+
+Checked Exceptions are verified by the compiler and must be handled, whereas Unchecked Exceptions occur at runtime and are usually caused by programming mistakes.
