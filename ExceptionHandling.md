@@ -691,3 +691,452 @@ ArrayIndexOutOfBoundsException
 # One-Line Summary
 
 Checked Exceptions are verified by the compiler and must be handled, whereas Unchecked Exceptions occur at runtime and are usually caused by programming mistakes.
+# try-catch-finally in Java
+
+Java provides the try-catch-finally mechanism to handle exceptions gracefully.
+
+- try → Contains risky code.
+- catch → Handles exception.
+- finally → Executes whether exception occurs or not.
+
+This helps prevent application crashes and ensures cleanup code executes properly.
+
+---
+
+# try Block
+
+## Definition
+
+The try block contains code that may throw an exception.
+
+Example:
+
+```java
+try {
+
+    int result = 10 / 0;
+
+}
+```
+
+If an exception occurs, JVM immediately stops executing the remaining code inside try and transfers control to the appropriate catch block.
+
+---
+
+# catch Block
+
+## Definition
+
+The catch block handles exceptions thrown from the try block.
+
+Example:
+
+```java
+try {
+
+    int result = 10 / 0;
+
+} catch (ArithmeticException e) {
+
+    System.out.println("Cannot divide by zero");
+}
+```
+
+Output:
+
+```text
+Cannot divide by zero
+```
+
+---
+
+# finally Block
+
+## Definition
+
+The finally block always executes regardless of whether an exception occurs or not.
+
+Example:
+
+```java
+try {
+
+    int result = 10 / 0;
+
+} catch (ArithmeticException e) {
+
+    System.out.println("Exception Handled");
+
+} finally {
+
+    System.out.println("Finally Executed");
+}
+```
+
+Output:
+
+```text
+Exception Handled
+Finally Executed
+```
+
+---
+
+# Normal Execution Flow
+
+## Example
+
+```java
+try {
+
+    System.out.println("Inside Try");
+
+} catch (Exception e) {
+
+    System.out.println("Inside Catch");
+
+} finally {
+
+    System.out.println("Inside Finally");
+}
+```
+
+Output:
+
+```text
+Inside Try
+Inside Finally
+```
+
+---
+
+# Exception Execution Flow
+
+## Example
+
+```java
+try {
+
+    int result = 10 / 0;
+
+} catch (ArithmeticException e) {
+
+    System.out.println("Inside Catch");
+
+} finally {
+
+    System.out.println("Inside Finally");
+}
+```
+
+Output:
+
+```text
+Inside Catch
+Inside Finally
+```
+
+---
+
+# Can We Use try Without catch?
+
+Yes.
+
+If finally is present.
+
+Example:
+
+```java
+try {
+
+    System.out.println("Hello");
+
+} finally {
+
+    System.out.println("Cleanup");
+}
+```
+
+Valid code.
+
+---
+
+# Can We Use try Without finally?
+
+Yes.
+
+If catch is present.
+
+Example:
+
+```java
+try {
+
+    int result = 10 / 0;
+
+} catch (Exception e) {
+
+    System.out.println("Handled");
+}
+```
+
+Valid code.
+
+---
+
+# Can We Use try Alone?
+
+No.
+
+Invalid:
+
+```java
+try {
+
+    System.out.println("Hello");
+
+}
+```
+
+Compilation Error.
+
+At least one of the following is required:
+
+```text
+catch
+finally
+```
+
+---
+
+# Execution Flow Summary
+
+## No Exception
+
+```text
+try → finally
+```
+
+---
+
+## Exception Handled
+
+```text
+try → catch → finally
+```
+
+---
+
+## Exception Not Handled
+
+```text
+try → finally → JVM Default Handler
+```
+
+---
+
+# Real World Example
+
+Database Connection:
+
+```java
+Connection con = null;
+
+try {
+
+    con = getConnection();
+
+} catch (Exception e) {
+
+    e.printStackTrace();
+
+} finally {
+
+    con.close();
+}
+```
+
+finally ensures resources are released.
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: What is the purpose of try block?
+
+### Answer
+
+Contains code that may throw an exception.
+
+---
+
+## Q2: What is the purpose of catch block?
+
+### Answer
+
+Handles exceptions thrown from try block.
+
+---
+
+## Q3: What is the purpose of finally block?
+
+### Answer
+
+Executes cleanup code regardless of exception occurrence.
+
+---
+
+## Q4: Can We Have Multiple Catch Blocks?
+
+### Answer
+
+Yes.
+
+```java
+try {
+
+} catch (ArithmeticException e) {
+
+} catch (NullPointerException e) {
+
+}
+```
+
+---
+
+## Q5: Is finally Always Executed?
+
+### Answer
+
+Almost always.
+
+There are some exceptions discussed later.
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+What Will Be Output?
+
+```java
+try {
+
+    System.out.println("Try");
+
+} finally {
+
+    System.out.println("Finally");
+}
+```
+
+### Output
+
+```text
+Try
+Finally
+```
+
+---
+
+## Question
+
+What Will Be Output?
+
+```java
+try {
+
+    int result = 10 / 0;
+
+} catch (ArithmeticException e) {
+
+    System.out.println("Catch");
+
+} finally {
+
+    System.out.println("Finally");
+}
+```
+
+### Output
+
+```text
+Catch
+Finally
+```
+
+---
+
+## Question
+
+Can finally Exist Without catch?
+
+### Answer
+
+Yes.
+
+---
+
+## Question
+
+Can catch Exist Without finally?
+
+### Answer
+
+Yes.
+
+---
+
+## Question
+
+Can try Exist Without catch and finally?
+
+### Answer
+
+No.
+
+Compilation Error.
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Does finally Execute If Exception Occurs?
+
+### Answer
+
+Yes.
+
+finally executes whether an exception occurs or not.
+
+---
+
+## Question
+
+Does finally Execute If Exception Is Handled?
+
+### Answer
+
+Yes.
+
+finally still executes.
+
+---
+
+# Key Points For Revision
+
+- try contains risky code.
+- catch handles exceptions.
+- finally executes cleanup code.
+- finally executes in both normal and exceptional cases.
+- try must have either catch or finally.
+- Multiple catch blocks are allowed.
+
+---
+
+# One-Line Summary
+
+The try-catch-finally mechanism allows Java applications to handle exceptions gracefully while ensuring cleanup code always executes.
