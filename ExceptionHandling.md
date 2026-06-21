@@ -1140,3 +1140,366 @@ finally still executes.
 # One-Line Summary
 
 The try-catch-finally mechanism allows Java applications to handle exceptions gracefully while ensuring cleanup code always executes.
+# Difference Between throw and throws in Java
+
+Both `throw` and `throws` are used in Exception Handling, but they serve different purposes.
+
+- `throw` is used to explicitly throw an exception.
+- `throws` is used to declare exceptions that a method may throw.
+
+In simple words:
+
+```text
+throw  -> Actually Throws Exception
+
+throws -> Declares Exception
+```
+
+This is one of the most frequently asked Java interview questions.
+
+---
+
+# What is throw?
+
+## Definition
+
+The `throw` keyword is used to explicitly create and throw an exception.
+
+---
+
+## Syntax
+
+```java
+throw new ExceptionType("Message");
+```
+
+---
+
+## Example
+
+```java
+public class Test {
+
+    public static void main(String[] args) {
+
+        throw new ArithmeticException("Divide by zero");
+    }
+}
+```
+
+Output:
+
+```text
+Exception in thread "main"
+java.lang.ArithmeticException: Divide by zero
+```
+
+---
+
+# Real World Example
+
+```java
+public class Voting {
+
+    public static void vote(int age) {
+
+        if(age < 18) {
+
+            throw new RuntimeException("Not Eligible For Voting");
+        }
+
+        System.out.println("Eligible");
+    }
+}
+```
+
+---
+
+# What is throws?
+
+## Definition
+
+The `throws` keyword is used in method declaration to indicate that the method may throw an exception.
+
+Responsibility of handling exception is transferred to the caller.
+
+---
+
+## Syntax
+
+```java
+public void method() throws Exception {
+
+}
+```
+
+---
+
+## Example
+
+```java
+import java.io.*;
+
+public class Test {
+
+    public static void readFile() throws IOException {
+
+        FileReader file =
+                new FileReader("test.txt");
+    }
+}
+```
+
+The method is informing the caller:
+
+```text
+I may throw IOException.
+Handle it yourself.
+```
+
+---
+
+# Difference Between throw and throws
+
+| Feature | throw | throws |
+|----------|----------|----------|
+| Keyword Type | Statement | Declaration |
+| Purpose | Throw Exception | Declare Exception |
+| Location | Method Body | Method Signature |
+| Number of Exceptions | One | Multiple |
+| Followed By | Exception Object | Exception Class |
+
+---
+
+# Example Using throw
+
+```java
+throw new NullPointerException();
+```
+
+Actual exception is thrown.
+
+---
+
+# Example Using throws
+
+```java
+public void test()
+throws IOException {
+
+}
+```
+
+Exception is only declared.
+
+---
+
+# Can We Use Multiple Exceptions With throws?
+
+Yes.
+
+Example:
+
+```java
+public void test()
+throws IOException,
+       SQLException,
+       ClassNotFoundException {
+
+}
+```
+
+---
+
+# Can We Use Multiple Exceptions With throw?
+
+No.
+
+```java
+throw new IOException();
+```
+
+Only one exception object at a time.
+
+---
+
+# Real Project Example
+
+Suppose a banking application:
+
+```java
+public void withdraw(double amount) {
+
+    if(amount <= 0) {
+
+        throw new IllegalArgumentException(
+                "Invalid Amount");
+    }
+}
+```
+
+Used for validation.
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: What is throw?
+
+### Answer
+
+Used to explicitly throw an exception.
+
+---
+
+## Q2: What is throws?
+
+### Answer
+
+Used to declare exceptions that a method may throw.
+
+---
+
+## Q3: Which Keyword Creates an Exception?
+
+### Answer
+
+```java
+throw
+```
+
+---
+
+## Q4: Which Keyword Appears in Method Signature?
+
+### Answer
+
+```java
+throws
+```
+
+---
+
+## Q5: Can We Use throws With RuntimeException?
+
+### Answer
+
+Yes.
+
+But it is not mandatory.
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+Can We Use throw Without throws?
+
+### Answer
+
+Yes.
+
+For unchecked exceptions.
+
+Example:
+
+```java
+throw new ArithmeticException();
+```
+
+---
+
+## Question
+
+Can We Use throws Without throw?
+
+### Answer
+
+Yes.
+
+Method may declare exception without explicitly throwing it.
+
+---
+
+## Question
+
+Which One Comes After Method Name?
+
+### Answer
+
+```java
+throws
+```
+
+Example:
+
+```java
+public void test()
+throws IOException {
+
+}
+```
+
+---
+
+## Question
+
+Which One Creates Exception Object?
+
+### Answer
+
+```java
+throw
+```
+
+Example:
+
+```java
+throw new IOException();
+```
+
+---
+
+# Common Interview Trap
+
+## Question
+
+What Is Output?
+
+```java
+public static void main(String[] args)
+throws Exception {
+
+    System.out.println("Hello");
+}
+```
+
+### Answer
+
+```text
+Hello
+```
+
+No exception occurs.
+
+`throws` only declares possibility.
+
+---
+
+# Key Points For Revision
+
+- throw throws exception explicitly.
+- throws declares exception.
+- throw is used inside method body.
+- throws is used in method signature.
+- throw uses exception object.
+- throws uses exception class.
+- throw can throw one exception at a time.
+- throws can declare multiple exceptions.
+
+---
+
+# One-Line Summary
+
+`throw` is used to explicitly throw an exception, whereas `throws` is used to declare exceptions that a method may throw.
