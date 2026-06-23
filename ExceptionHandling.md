@@ -1503,3 +1503,407 @@ No exception occurs.
 # One-Line Summary
 
 `throw` is used to explicitly throw an exception, whereas `throws` is used to declare exceptions that a method may throw.
+# Custom Exception in Java
+
+Custom Exceptions are user-defined exceptions created by developers to represent business-specific error conditions.
+
+Java provides many built-in exceptions such as:
+
+```java
+NullPointerException
+ArithmeticException
+IOException
+```
+
+However, in real projects, we often need exceptions specific to business requirements.
+
+Examples:
+
+```text
+InvalidAgeException
+InsufficientBalanceException
+InvalidAccountException
+ProductNotFoundException
+```
+
+For such cases, we create Custom Exceptions.
+
+---
+
+# Why Do We Need Custom Exceptions?
+
+Suppose we are building a Banking Application.
+
+Requirement:
+
+```text
+Minimum Balance Must Be ₹1000
+```
+
+If user tries to withdraw more money:
+
+```text
+Insufficient Balance
+```
+
+Using:
+
+```java
+ArithmeticException
+```
+
+does not clearly represent the business problem.
+
+Instead:
+
+```java
+InsufficientBalanceException
+```
+
+makes code more readable and meaningful.
+
+---
+
+# How To Create Custom Exception?
+
+There are two ways:
+
+```text
+1. Checked Exception
+2. Unchecked Exception
+```
+
+---
+
+# Creating Custom Checked Exception
+
+## Step 1
+
+Extend Exception class.
+
+```java
+public class InvalidAgeException
+        extends Exception {
+
+    public InvalidAgeException(String message) {
+
+        super(message);
+    }
+}
+```
+
+---
+
+## Step 2
+
+Use Exception
+
+```java
+public class Voting {
+
+    public static void vote(int age)
+            throws InvalidAgeException {
+
+        if(age < 18) {
+
+            throw new InvalidAgeException(
+                    "Age Must Be 18 Or Above");
+        }
+
+        System.out.println("Eligible To Vote");
+    }
+}
+```
+
+---
+
+## Step 3
+
+Handle Exception
+
+```java
+public class Test {
+
+    public static void main(String[] args) {
+
+        try {
+
+            Voting.vote(16);
+
+        } catch (InvalidAgeException e) {
+
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
+
+Output:
+
+```text
+Age Must Be 18 Or Above
+```
+
+---
+
+# Creating Custom Unchecked Exception
+
+Extend:
+
+```java
+RuntimeException
+```
+
+Example:
+
+```java
+public class InvalidAgeException
+        extends RuntimeException {
+
+    public InvalidAgeException(String message) {
+
+        super(message);
+    }
+}
+```
+
+Usage:
+
+```java
+if(age < 18) {
+
+    throw new InvalidAgeException(
+            "Not Eligible");
+}
+```
+
+No mandatory handling required.
+
+---
+
+# Checked vs Unchecked Custom Exception
+
+| Feature | Checked | Unchecked |
+|----------|----------|----------|
+| Parent Class | Exception | RuntimeException |
+| Compiler Checks | Yes | No |
+| Handling Mandatory | Yes | No |
+| Example | InvalidAgeException | InvalidAgeException |
+
+---
+
+# Real Project Example
+
+## Banking System
+
+```java
+public class InsufficientBalanceException
+        extends Exception {
+
+    public InsufficientBalanceException(
+            String message) {
+
+        super(message);
+    }
+}
+```
+
+Usage:
+
+```java
+if(balance < amount) {
+
+    throw new InsufficientBalanceException(
+            "Insufficient Balance");
+}
+```
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: What is a Custom Exception?
+
+### Answer
+
+A user-defined exception created to represent business-specific error conditions.
+
+---
+
+## Q2: How Do We Create a Custom Exception?
+
+### Answer
+
+Extend:
+
+```java
+Exception
+```
+
+or
+
+```java
+RuntimeException
+```
+
+---
+
+## Q3: When Should We Create Custom Exceptions?
+
+### Answer
+
+When built-in exceptions do not clearly represent business requirements.
+
+Examples:
+
+```text
+InvalidAgeException
+InsufficientBalanceException
+OrderNotFoundException
+```
+
+---
+
+## Q4: Which Is Better?
+
+### Answer
+
+Depends on requirement.
+
+```text
+Mandatory Handling → Checked Exception
+
+Optional Handling → Runtime Exception
+```
+
+---
+
+## Q5: Can We Add Constructors?
+
+### Answer
+
+Yes.
+
+```java
+public InvalidAgeException(String msg) {
+
+    super(msg);
+}
+```
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+Can We Create Exception Without Extending Exception Class?
+
+### Answer
+
+No.
+
+Custom exception should extend:
+
+```java
+Exception
+```
+
+or
+
+```java
+RuntimeException
+```
+
+---
+
+## Question
+
+Can We Create Custom Runtime Exception?
+
+### Answer
+
+Yes.
+
+```java
+class InvalidUserException
+        extends RuntimeException {
+
+}
+```
+
+---
+
+## Question
+
+Can We Throw Custom Exception Using throw?
+
+### Answer
+
+Yes.
+
+```java
+throw new InvalidAgeException(
+        "Age Must Be 18+");
+```
+
+---
+
+## Question
+
+Can Custom Exception Have Methods?
+
+### Answer
+
+Yes.
+
+It is a normal Java class.
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Should Every Validation Have a Custom Exception?
+
+### Answer
+
+No.
+
+Create Custom Exceptions only when they improve readability and business understanding.
+
+Bad:
+
+```java
+InvalidNumberException
+InvalidNameException
+InvalidEmailException
+```
+
+for every small validation.
+
+Good:
+
+```java
+InsufficientBalanceException
+OrderNotFoundException
+UserNotAuthorizedException
+```
+
+---
+
+# Key Points For Revision
+
+- Custom Exceptions are user-defined exceptions.
+- Extend Exception for Checked Exceptions.
+- Extend RuntimeException for Unchecked Exceptions.
+- Improve readability and business understanding.
+- Frequently used in real-world applications.
+- Can be thrown using throw keyword.
+
+---
+
+# One-Line Summary
+
+A Custom Exception is a user-defined exception created to represent specific business errors that built-in Java exceptions cannot clearly express.
