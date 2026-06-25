@@ -1907,3 +1907,466 @@ UserNotAuthorizedException
 # One-Line Summary
 
 A Custom Exception is a user-defined exception created to represent specific business errors that built-in Java exceptions cannot clearly express.
+# Exception Propagation in Java
+
+Exception Propagation is the process where an exception travels from the method where it occurred to the calling method until it is handled.
+
+If a method does not handle an exception, JVM passes the exception to its caller.
+
+This process continues through the call stack until:
+
+```text
+Exception Gets Handled
+```
+
+or
+
+```text
+Program Terminates
+```
+
+Exception propagation mainly happens for:
+
+```java
+Unchecked Exceptions
+```
+
+such as:
+
+```java
+ArithmeticException
+NullPointerException
+ArrayIndexOutOfBoundsException
+```
+
+---
+
+# Understanding With Example
+
+## Code
+
+```java
+public class Test {
+
+    public static void method3() {
+
+        int result = 10 / 0;
+    }
+
+    public static void method2() {
+
+        method3();
+    }
+
+    public static void method1() {
+
+        method2();
+    }
+
+    public static void main(String[] args) {
+
+        method1();
+    }
+}
+```
+
+Output:
+
+```text
+ArithmeticException
+```
+
+---
+
+# Flow
+
+```text
+main()
+   |
+method1()
+   |
+method2()
+   |
+method3()
+   |
+ArithmeticException
+```
+
+Exception occurs in:
+
+```java
+method3()
+```
+
+Not handled.
+
+Moves to:
+
+```java
+method2()
+```
+
+Not handled.
+
+Moves to:
+
+```java
+method1()
+```
+
+Not handled.
+
+Moves to:
+
+```java
+main()
+```
+
+Not handled.
+
+JVM Default Exception Handler executes.
+
+Program terminates.
+
+---
+
+# Handling Propagated Exception
+
+## Example
+
+```java
+public class Test {
+
+    public static void method3() {
+
+        int result = 10 / 0;
+    }
+
+    public static void method2() {
+
+        method3();
+    }
+
+    public static void method1() {
+
+        try {
+
+            method2();
+
+        } catch (ArithmeticException e) {
+
+            System.out.println("Handled");
+        }
+    }
+
+    public static void main(String[] args) {
+
+        method1();
+    }
+}
+```
+
+Output:
+
+```text
+Handled
+```
+
+---
+
+# Visual Representation
+
+```text
+method3()
+   |
+Exception
+   ↓
+method2()
+   ↓
+method1()
+   ↓
+catch Block
+```
+
+---
+
+# Checked Exception Propagation
+
+## Example
+
+```java
+public void method3()
+        throws IOException {
+
+}
+```
+
+```java
+public void method2()
+        throws IOException {
+
+    method3();
+}
+```
+
+```java
+public void method1()
+        throws IOException {
+
+    method2();
+}
+```
+
+Eventually:
+
+```java
+try {
+
+    method1();
+
+} catch(IOException e) {
+
+}
+```
+
+---
+
+# Why Is Exception Propagation Useful?
+
+Without propagation:
+
+Every method would need:
+
+```java
+try-catch
+```
+
+This would make code messy.
+
+Instead:
+
+```text
+Handle Exception At Appropriate Layer
+```
+
+Example:
+
+```text
+DAO Layer
+Service Layer
+Controller Layer
+```
+
+Exception can travel upward.
+
+---
+
+# Real Project Example
+
+```java
+Controller
+   |
+Service
+   |
+Repository
+```
+
+Suppose:
+
+```java
+SQLException
+```
+
+occurs in Repository.
+
+Instead of handling there:
+
+```text
+Repository → Service → Controller
+```
+
+Controller handles exception and sends proper API response.
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: What is Exception Propagation?
+
+### Answer
+
+The process of passing an exception from one method to its caller until it is handled.
+
+---
+
+## Q2: Why Does Exception Propagation Happen?
+
+### Answer
+
+Because the current method does not handle the exception.
+
+---
+
+## Q3: Which Exceptions Propagate Automatically?
+
+### Answer
+
+```java
+Runtime Exceptions
+```
+
+Examples:
+
+```java
+ArithmeticException
+NullPointerException
+```
+
+---
+
+## Q4: Can Checked Exceptions Propagate?
+
+### Answer
+
+Yes.
+
+Using:
+
+```java
+throws
+```
+
+---
+
+## Q5: What Happens If Nobody Handles Exception?
+
+### Answer
+
+JVM Default Exception Handler executes.
+
+Program terminates.
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+Will This Compile?
+
+```java
+public void test() {
+
+    throw new IOException();
+}
+```
+
+### Answer
+
+No.
+
+IOException is checked exception.
+
+Must be:
+
+```java
+try-catch
+```
+
+or
+
+```java
+throws IOException
+```
+
+---
+
+## Question
+
+Can Runtime Exceptions Propagate Without throws?
+
+### Answer
+
+Yes.
+
+Example:
+
+```java
+ArithmeticException
+```
+
+---
+
+## Question
+
+Does Exception Propagation Work Bottom To Top?
+
+### Answer
+
+Yes.
+
+It moves upward through method call stack.
+
+---
+
+## Question
+
+Can We Catch Exception In Main Method?
+
+### Answer
+
+Yes.
+
+```java
+public static void main(String[] args) {
+
+    try {
+
+    } catch(Exception e) {
+
+    }
+}
+```
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Does Every Exception Automatically Propagate?
+
+### Answer
+
+No.
+
+Checked exceptions require:
+
+```java
+throws
+```
+
+or
+
+```java
+try-catch
+```
+
+Runtime exceptions propagate automatically.
+
+---
+
+# Key Points For Revision
+
+- Exception Propagation moves exception up the call stack.
+- Happens when current method does not handle exception.
+- Runtime exceptions propagate automatically.
+- Checked exceptions use throws.
+- JVM handles exception if nobody catches it.
+- Improves code maintainability.
+
+---
+
+# One-Line Summary
+
+Exception Propagation is the process of passing an exception from the method where it occurs to its caller until it is handled or reaches the JVM.
