@@ -2370,3 +2370,414 @@ Runtime exceptions propagate automatically.
 # One-Line Summary
 
 Exception Propagation is the process of passing an exception from the method where it occurs to its caller until it is handled or reaches the JVM.
+# Multiple Catch Blocks in Java
+
+In Java, a single `try` block can have multiple `catch` blocks.
+
+Each catch block handles a specific type of exception.
+
+When an exception occurs, JVM checks each catch block from top to bottom.
+
+The first matching catch block is executed, and the remaining catch blocks are skipped.
+
+Multiple catch blocks help us handle different exceptions in different ways.
+
+---
+
+# Why Do We Need Multiple Catch Blocks?
+
+Suppose a program performs multiple operations:
+
+- Division
+- Array Access
+- File Reading
+
+Each operation may throw a different exception.
+
+Instead of writing one generic catch block, we can handle each exception separately.
+
+---
+
+# Example
+
+```java
+public class Test {
+
+    public static void main(String[] args) {
+
+        try {
+
+            int[] arr = {10,20,30};
+
+            System.out.println(arr[5]);
+
+            int result = 10 / 0;
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+            System.out.println("Invalid Array Index");
+
+        } catch (ArithmeticException e) {
+
+            System.out.println("Cannot Divide By Zero");
+        }
+    }
+}
+```
+
+Output
+
+```text
+Invalid Array Index
+```
+
+Reason:
+
+The first exception occurs while accessing the array.
+
+Execution immediately moves to the matching catch block.
+
+---
+
+# Execution Flow
+
+```text
+try
+ |
+Exception Occurs
+ |
+Check Catch 1
+ |
+Matched ?
+ |
+Yes
+ |
+Execute Catch
+ |
+Skip Remaining Catch Blocks
+```
+
+---
+
+# Example 2
+
+```java
+public class Test {
+
+    public static void main(String[] args) {
+
+        try {
+
+            int result = 10 / 0;
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+            System.out.println("Array Error");
+
+        } catch (ArithmeticException e) {
+
+            System.out.println("Arithmetic Error");
+        }
+    }
+}
+```
+
+Output
+
+```text
+Arithmetic Error
+```
+
+---
+
+# Can We Catch Parent Exception First?
+
+No.
+
+Example
+
+```java
+try {
+
+} catch (Exception e) {
+
+} catch (ArithmeticException e) {
+
+}
+```
+
+Compilation Error
+
+```text
+Unreachable catch block
+```
+
+Reason:
+
+`Exception` is the parent of `ArithmeticException`.
+
+The parent catch block already handles every subclass.
+
+The second catch block will never execute.
+
+---
+
+# Correct Order
+
+```java
+try {
+
+} catch (ArithmeticException e) {
+
+} catch (Exception e) {
+
+}
+```
+
+Always write:
+
+```text
+Specific Exception
+        ↓
+General Exception
+```
+
+---
+
+# Multi-Catch (Java 7)
+
+If multiple exceptions require the same handling logic, Java allows them to be combined using the `|` operator.
+
+Example
+
+```java
+try {
+
+    int[] arr = {1,2,3};
+
+    System.out.println(arr[5]);
+
+} catch (ArithmeticException | ArrayIndexOutOfBoundsException e) {
+
+    System.out.println("Exception Handled");
+}
+```
+
+Output
+
+```text
+Exception Handled
+```
+
+---
+
+# Advantages of Multi-Catch
+
+- Reduces duplicate code.
+- Improves readability.
+- Easier to maintain.
+
+---
+
+# Real Project Example
+
+```java
+try {
+
+    // Database Operation
+
+} catch (SQLException e) {
+
+    // Database Error
+
+} catch (IOException e) {
+
+    // File Error
+
+} catch (Exception e) {
+
+    // Unexpected Error
+}
+```
+
+Each exception is handled differently based on the business requirement.
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: Can a try block have multiple catch blocks?
+
+### Answer
+
+Yes.
+
+One try block can have multiple catch blocks.
+
+---
+
+## Q2: Which catch block executes?
+
+### Answer
+
+The first matching catch block.
+
+---
+
+## Q3: Can two catch blocks execute for one exception?
+
+### Answer
+
+No.
+
+Once a matching catch block is executed, the remaining catch blocks are skipped.
+
+---
+
+## Q4: What happens if no catch block matches?
+
+### Answer
+
+The exception propagates to the caller.
+
+If nobody handles it, JVM's Default Exception Handler terminates the program.
+
+---
+
+## Q5: Can we use Exception as the last catch block?
+
+### Answer
+
+Yes.
+
+It should always be the last catch block.
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+Will this compile?
+
+```java
+try {
+
+} catch (Exception e) {
+
+} catch (ArithmeticException e) {
+
+}
+```
+
+### Answer
+
+No.
+
+Compilation Error.
+
+Reason:
+
+The second catch block is unreachable.
+
+---
+
+## Question
+
+What is the correct order?
+
+### Answer
+
+```java
+catch (ArithmeticException e)
+
+catch (NullPointerException e)
+
+catch (Exception e)
+```
+
+Specific exceptions first.
+
+General exception last.
+
+---
+
+## Question
+
+Can we write multiple Exception catch blocks?
+
+```java
+catch(Exception e){
+
+}
+
+catch(Exception e){
+
+}
+```
+
+### Answer
+
+No.
+
+Compilation Error.
+
+Duplicate catch blocks are not allowed.
+
+---
+
+## Question
+
+Can we combine exceptions in one catch block?
+
+### Answer
+
+Yes.
+
+```java
+catch(IOException | SQLException e){
+
+}
+```
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Which catch block should always be written last?
+
+### Answer
+
+```java
+catch(Exception e)
+```
+
+Because it is the parent of almost all exceptions.
+
+---
+
+# Best Practices
+
+- Catch the most specific exception first.
+- Catch the general `Exception` last.
+- Avoid empty catch blocks.
+- Use multi-catch when handling logic is the same.
+- Never ignore exceptions silently.
+
+---
+
+# Key Points For Revision
+
+- One try block can have multiple catch blocks.
+- JVM executes only the first matching catch block.
+- Specific exception first, general exception last.
+- Multi-catch was introduced in Java 7.
+- Exception propagation occurs if no catch block matches.
+
+---
+
+# One-Line Summary
+
+Multiple catch blocks allow a single try block to handle different exception types separately, and the JVM executes only the first matching catch block.
