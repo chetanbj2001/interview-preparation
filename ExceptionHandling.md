@@ -2781,3 +2781,554 @@ Because it is the parent of almost all exceptions.
 # One-Line Summary
 
 Multiple catch blocks allow a single try block to handle different exception types separately, and the JVM executes only the first matching catch block.
+# finally Block Deep Dive in Java
+
+## Interview Answer (1-2 Minutes)
+
+The `finally` block is used to execute cleanup code.
+
+It executes whether an exception occurs or not.
+
+Typical use cases include:
+
+- Closing Database Connections
+- Closing Files
+- Closing Network Connections
+- Releasing Resources
+
+Its primary purpose is to ensure that important cleanup code always runs.
+
+---
+
+# Syntax
+
+```java
+try {
+
+    // Risky Code
+
+} catch (Exception e) {
+
+    // Exception Handling
+
+} finally {
+
+    // Cleanup Code
+}
+```
+
+---
+
+# Case 1: No Exception
+
+## Example
+
+```java
+try {
+
+    System.out.println("Inside Try");
+
+} finally {
+
+    System.out.println("Inside Finally");
+}
+```
+
+### Output
+
+```text
+Inside Try
+Inside Finally
+```
+
+---
+
+# Case 2: Exception Occurs and is Handled
+
+## Example
+
+```java
+try {
+
+    int result = 10 / 0;
+
+} catch (ArithmeticException e) {
+
+    System.out.println("Exception Handled");
+
+} finally {
+
+    System.out.println("Finally Executed");
+}
+```
+
+### Output
+
+```text
+Exception Handled
+Finally Executed
+```
+
+---
+
+# Case 3: Exception Occurs but is NOT Handled
+
+## Example
+
+```java
+try {
+
+    int result = 10 / 0;
+
+} finally {
+
+    System.out.println("Finally Executed");
+}
+```
+
+### Output
+
+```text
+Finally Executed
+
+Exception in thread "main"
+java.lang.ArithmeticException
+```
+
+Explanation:
+
+- finally executes first.
+- Then JVM terminates the program.
+
+---
+
+# finally with return Statement
+
+## Example
+
+```java
+public static int test() {
+
+    try {
+
+        return 10;
+
+    } finally {
+
+        System.out.println("Finally");
+    }
+}
+```
+
+Output
+
+```text
+Finally
+10
+```
+
+Even though `return` is executed inside `try`, JVM executes `finally` before returning.
+
+---
+
+# return in Both try and finally
+
+## Example
+
+```java
+public static int test() {
+
+    try {
+
+        return 10;
+
+    } finally {
+
+        return 20;
+    }
+}
+```
+
+### Output
+
+```text
+20
+```
+
+---
+
+## Why?
+
+Execution Flow
+
+```text
+Try Executes
+
+↓
+
+Return 10 Prepared
+
+↓
+
+Finally Executes
+
+↓
+
+Return 20
+
+↓
+
+Method Ends
+```
+
+The return statement in `finally` overrides the return statement in `try`.
+
+---
+
+# Why Should We Avoid return in finally?
+
+Because it:
+
+- Hides exceptions
+- Overrides return values
+- Makes debugging difficult
+
+Example
+
+```java
+try {
+
+    throw new RuntimeException();
+
+} finally {
+
+    return;
+}
+```
+
+The exception is suppressed.
+
+This is considered a bad practice.
+
+---
+
+# Can finally Modify Variables?
+
+Example
+
+```java
+public static int test() {
+
+    int x = 10;
+
+    try {
+
+        return x;
+
+    } finally {
+
+        x = 20;
+    }
+}
+```
+
+Output
+
+```text
+10
+```
+
+Reason:
+
+The return value is evaluated before entering the finally block.
+
+---
+
+# finally with Exception
+
+```java
+try {
+
+    throw new RuntimeException("Try Exception");
+
+} finally {
+
+    throw new RuntimeException("Finally Exception");
+}
+```
+
+### Output
+
+```text
+Finally Exception
+```
+
+The exception thrown in `finally` overrides the exception thrown in `try`.
+
+---
+
+# When Does finally NOT Execute?
+
+This is a favorite interview question.
+
+Normally, finally always executes.
+
+However, there are a few exceptions.
+
+---
+
+## Case 1: JVM Terminates
+
+```java
+try {
+
+    System.exit(0);
+
+} finally {
+
+    System.out.println("Finally");
+}
+```
+
+Output
+
+```text
+Program Terminates
+```
+
+finally does not execute because the JVM shuts down.
+
+---
+
+## Case 2: JVM Crash
+
+Examples
+
+```text
+Power Failure
+
+System Crash
+
+JVM Crash
+```
+
+finally cannot execute.
+
+---
+
+## Case 3: Forceful Process Kill
+
+Examples
+
+```text
+kill -9 (Linux)
+
+Task Manager → End Process (Windows)
+```
+
+The JVM is terminated immediately.
+
+---
+
+# Real Project Example
+
+```java
+Connection con = null;
+
+try {
+
+    con = DriverManager.getConnection(...);
+
+} finally {
+
+    if(con != null) {
+
+        con.close();
+    }
+}
+```
+
+Even if an exception occurs, the database connection is closed.
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: Does finally always execute?
+
+### Answer
+
+Almost always.
+
+Exceptions include:
+
+- System.exit()
+- JVM Crash
+- Forcefully killing the JVM
+
+---
+
+## Q2: Can we write return in finally?
+
+### Answer
+
+Yes.
+
+But it is strongly discouraged.
+
+---
+
+## Q3: Which return executes?
+
+```java
+try {
+
+    return 10;
+
+} finally {
+
+    return 20;
+}
+```
+
+### Answer
+
+```text
+20
+```
+
+---
+
+## Q4: Can finally throw an exception?
+
+### Answer
+
+Yes.
+
+The exception thrown in finally overrides the exception from try.
+
+---
+
+## Q5: Why is finally used?
+
+### Answer
+
+To execute cleanup code such as closing resources.
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+What is the output?
+
+```java
+try {
+
+    return 100;
+
+} finally {
+
+    System.out.println("Finally");
+}
+```
+
+### Answer
+
+```text
+Finally
+100
+```
+
+---
+
+## Question
+
+What is the output?
+
+```java
+try {
+
+    return 100;
+
+} finally {
+
+    return 200;
+}
+```
+
+### Answer
+
+```text
+200
+```
+
+---
+
+## Question
+
+Will finally execute?
+
+```java
+try {
+
+    System.exit(0);
+
+} finally {
+
+    System.out.println("Finally");
+}
+```
+
+### Answer
+
+No.
+
+The JVM terminates before executing finally.
+
+---
+
+## Question
+
+Can finally exist without catch?
+
+### Answer
+
+Yes.
+
+```java
+try {
+
+} finally {
+
+}
+```
+
+Valid Java code.
+
+---
+
+# Best Practices
+
+- Use finally for resource cleanup.
+- Avoid return statements inside finally.
+- Do not throw exceptions from finally.
+- Prefer try-with-resources for AutoCloseable resources.
+
+---
+
+# Key Points For Revision
+
+- finally executes in normal and exceptional cases.
+- finally executes before a method returns.
+- return inside finally overrides previous return.
+- finally is mainly used for cleanup.
+- finally does not execute after `System.exit()` or JVM termination.
+- Avoid writing return or throw inside finally.
+
+---
+
+# One-Line Summary
+
+The `finally` block is primarily used for resource cleanup and executes in almost every situation, even if an exception occurs or a return statement is executed.
