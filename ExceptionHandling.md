@@ -2783,8 +2783,6 @@ Because it is the parent of almost all exceptions.
 Multiple catch blocks allow a single try block to handle different exception types separately, and the JVM executes only the first matching catch block.
 # finally Block Deep Dive in Java
 
-## Interview Answer (1-2 Minutes)
-
 The `finally` block is used to execute cleanup code.
 
 It executes whether an exception occurs or not.
@@ -3332,3 +3330,396 @@ Valid Java code.
 # One-Line Summary
 
 The `finally` block is primarily used for resource cleanup and executes in almost every situation, even if an exception occurs or a return statement is executed.
+
+# try-with-resources in Java
+
+`try-with-resources` is a feature introduced in **Java 7** that automatically closes resources after they are used.
+
+Before Java 7, developers had to manually close resources inside the `finally` block.
+
+With try-with-resources, Java automatically closes all resources that implement the **AutoCloseable** interface, making the code cleaner, safer, and less error-prone.
+
+---
+
+# Why Was try-with-resources Introduced?
+
+Before Java 7:
+
+- Developers often forgot to close resources.
+- Resource leaks occurred.
+- Large applications could run out of database connections or file handles.
+
+Java 7 introduced try-with-resources to solve this problem.
+
+---
+
+# Before Java 7
+
+```java
+BufferedReader br = null;
+
+try {
+
+    br = new BufferedReader(new FileReader("test.txt"));
+
+    System.out.println(br.readLine());
+
+} catch (IOException e) {
+
+    e.printStackTrace();
+
+} finally {
+
+    if (br != null) {
+
+        try {
+
+            br.close();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+Problems:
+
+- More code
+- Nested try-catch
+- Easy to forget closing resources
+
+---
+
+# Using try-with-resources
+
+```java
+try (BufferedReader br =
+        new BufferedReader(new FileReader("test.txt"))) {
+
+    System.out.println(br.readLine());
+
+} catch (IOException e) {
+
+    e.printStackTrace();
+}
+```
+
+No finally block is required.
+
+Java automatically closes the resource.
+
+---
+
+# How Does It Work?
+
+The resource is created inside the parentheses.
+
+```java
+try(Resource resource = new Resource()) {
+
+}
+```
+
+When execution completes:
+
+```text
+Resource.close()
+```
+
+is called automatically by the JVM.
+
+---
+
+# AutoCloseable Interface
+
+Only resources implementing:
+
+```java
+AutoCloseable
+```
+
+can be used.
+
+Examples:
+
+```java
+BufferedReader
+BufferedWriter
+Scanner
+FileInputStream
+FileOutputStream
+Connection
+PreparedStatement
+ResultSet
+```
+
+---
+
+# Multiple Resources
+
+Multiple resources can be declared.
+
+```java
+try (
+
+    FileInputStream fis =
+        new FileInputStream("input.txt");
+
+    BufferedReader br =
+        new BufferedReader(new InputStreamReader(fis))
+
+) {
+
+    System.out.println(br.readLine());
+
+}
+```
+
+Both resources are automatically closed.
+
+---
+
+# Resource Closing Order
+
+Resources are closed in reverse order.
+
+Example
+
+```java
+try (
+
+    Resource1 r1 = new Resource1();
+
+    Resource2 r2 = new Resource2();
+
+) {
+
+}
+```
+
+Closing Order
+
+```text
+r2.close()
+
+↓
+
+r1.close()
+```
+
+---
+
+# Real Project Example
+
+```java
+try (
+
+    Connection con =
+        DriverManager.getConnection(url);
+
+    PreparedStatement ps =
+        con.prepareStatement(sql);
+
+    ResultSet rs =
+        ps.executeQuery()
+
+) {
+
+    while(rs.next()) {
+
+        System.out.println(rs.getString("name"));
+    }
+}
+```
+
+All resources are automatically closed.
+
+---
+
+# Advantages
+
+- Cleaner code
+- Automatic resource management
+- Prevents resource leaks
+- Less boilerplate code
+- Improves readability
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: What is try-with-resources?
+
+### Answer
+
+A Java 7 feature that automatically closes resources implementing AutoCloseable.
+
+---
+
+## Q2: Why is it better than finally?
+
+### Answer
+
+Because resources are automatically closed, reducing boilerplate code and preventing resource leaks.
+
+---
+
+## Q3: Which interface must a resource implement?
+
+### Answer
+
+```java
+AutoCloseable
+```
+
+---
+
+## Q4: Can we use multiple resources?
+
+### Answer
+
+Yes.
+
+```java
+try (
+
+    Scanner sc = new Scanner(System.in);
+
+    BufferedReader br =
+        new BufferedReader(new FileReader("test.txt"))
+
+) {
+
+}
+```
+
+---
+
+## Q5: Does try-with-resources replace finally?
+
+### Answer
+
+Only for closing resources.
+
+The `finally` block is still useful for other cleanup tasks.
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+Which Java version introduced try-with-resources?
+
+### Answer
+
+```text
+Java 7
+```
+
+---
+
+## Question
+
+Can we use any object inside try-with-resources?
+
+### Answer
+
+No.
+
+Only objects implementing:
+
+```java
+AutoCloseable
+```
+
+---
+
+## Question
+
+Will resources close if an exception occurs?
+
+### Answer
+
+Yes.
+
+Resources are closed automatically even if an exception is thrown.
+
+---
+
+## Question
+
+In what order are multiple resources closed?
+
+### Answer
+
+Reverse order of creation.
+
+Example:
+
+```java
+try (
+
+    Resource1 r1 = new Resource1();
+
+    Resource2 r2 = new Resource2()
+
+) {
+
+}
+```
+
+Closing order:
+
+```text
+r2.close()
+
+↓
+
+r1.close()
+```
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Does try-with-resources eliminate the need for catch?
+
+### Answer
+
+No.
+
+Exceptions can still occur and should be handled using:
+
+```java
+catch
+```
+
+---
+
+# Best Practices
+
+- Prefer try-with-resources over finally for AutoCloseable resources.
+- Use it for file handling, database connections, streams, sockets, and readers.
+- Keep resource declarations simple and readable.
+
+---
+
+# Key Points For Revision
+
+- Introduced in Java 7.
+- Automatically closes resources.
+- Works with AutoCloseable.
+- Resources close in reverse order.
+- Prevents resource leaks.
+- Preferred over finally for resource management.
+
+---
+
+# One-Line Summary
+
+try-with-resources is a Java 7 feature that automatically closes AutoCloseable resources, making code cleaner, safer, and preventing resource leaks.
