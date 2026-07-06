@@ -3723,3 +3723,452 @@ catch
 # One-Line Summary
 
 try-with-resources is a Java 7 feature that automatically closes AutoCloseable resources, making code cleaner, safer, and preventing resource leaks.
+# Method Overriding with Exceptions in Java
+
+When overriding a method in Java, the overriding method must follow certain rules regarding exceptions.
+
+These rules ensure that the child class does not introduce exceptions that the parent class contract did not specify.
+
+The rules are different for:
+
+- Checked Exceptions
+- Unchecked Exceptions
+
+This is one of the most frequently asked Java interview questions for 2+ years of experience.
+
+---
+
+# Rule 1: Same Checked Exception is Allowed
+
+## Parent Class
+
+```java
+import java.io.IOException;
+
+class Parent {
+
+    void display() throws IOException {
+
+        System.out.println("Parent");
+    }
+}
+```
+
+## Child Class
+
+```java
+import java.io.IOException;
+
+class Child extends Parent {
+
+    @Override
+    void display() throws IOException {
+
+        System.out.println("Child");
+    }
+}
+```
+
+✅ Valid
+
+Reason:
+
+Child throws the same checked exception as the parent.
+
+---
+
+# Rule 2: Child Can Throw Smaller (Subclass) Checked Exception
+
+## Parent
+
+```java
+import java.io.IOException;
+
+class Parent {
+
+    void display() throws IOException {
+
+    }
+}
+```
+
+## Child
+
+```java
+import java.io.FileNotFoundException;
+
+class Child extends Parent {
+
+    @Override
+    void display() throws FileNotFoundException {
+
+    }
+}
+```
+
+✅ Valid
+
+Reason:
+
+`FileNotFoundException` is a subclass of `IOException`.
+
+---
+
+# Rule 3: Child Cannot Throw Broader Checked Exception
+
+## Parent
+
+```java
+import java.io.IOException;
+
+class Parent {
+
+    void display() throws IOException {
+
+    }
+}
+```
+
+## Child
+
+```java
+class Child extends Parent {
+
+    @Override
+    void display() throws Exception {
+
+    }
+}
+```
+
+❌ Compilation Error
+
+Reason:
+
+`Exception` is broader than `IOException`.
+
+Java does not allow increasing the checked exception scope.
+
+---
+
+# Rule 4: Parent Does Not Throw Checked Exception
+
+## Parent
+
+```java
+class Parent {
+
+    void display() {
+
+    }
+}
+```
+
+## Child
+
+```java
+import java.io.IOException;
+
+class Child extends Parent {
+
+    @Override
+    void display() throws IOException {
+
+    }
+}
+```
+
+❌ Compilation Error
+
+Reason:
+
+The parent method does not declare any checked exception.
+
+The child cannot introduce one.
+
+---
+
+# Rule 5: Runtime Exceptions Are Always Allowed
+
+## Parent
+
+```java
+class Parent {
+
+    void display() {
+
+    }
+}
+```
+
+## Child
+
+```java
+class Child extends Parent {
+
+    @Override
+    void display() throws ArithmeticException {
+
+    }
+}
+```
+
+✅ Valid
+
+Reason:
+
+Runtime exceptions are unchecked.
+
+The compiler does not enforce them.
+
+---
+
+# Exception Rules Summary
+
+| Parent Method | Child Method | Valid? |
+|---------------|--------------|---------|
+| throws IOException | throws IOException | ✅ Yes |
+| throws IOException | throws FileNotFoundException | ✅ Yes |
+| throws IOException | throws Exception | ❌ No |
+| No Exception | throws IOException | ❌ No |
+| No Exception | throws RuntimeException | ✅ Yes |
+
+---
+
+# Why Does Java Have These Rules?
+
+Suppose:
+
+```java
+Parent obj = new Child();
+```
+
+If the child throws a broader checked exception than the parent declared, code written against the parent class would not know how to handle it.
+
+These rules preserve the contract defined by the parent class.
+
+---
+
+# Real Project Example
+
+```java
+class PaymentService {
+
+    public void processPayment()
+            throws IOException {
+
+    }
+}
+```
+
+```java
+class CreditCardPaymentService
+        extends PaymentService {
+
+    @Override
+    public void processPayment()
+            throws FileNotFoundException {
+
+    }
+}
+```
+
+✅ Valid
+
+Because `FileNotFoundException` is a subclass of `IOException`.
+
+---
+
+# Frequently Asked Interview Questions
+
+## Q1: Can an overriding method throw the same checked exception?
+
+### Answer
+
+Yes.
+
+---
+
+## Q2: Can an overriding method throw a subclass of the parent's checked exception?
+
+### Answer
+
+Yes.
+
+---
+
+## Q3: Can an overriding method throw a broader checked exception?
+
+### Answer
+
+No.
+
+Compilation Error.
+
+---
+
+## Q4: Can an overriding method throw RuntimeException?
+
+### Answer
+
+Yes.
+
+Unchecked exceptions are always allowed.
+
+---
+
+## Q5: Why are RuntimeExceptions allowed?
+
+### Answer
+
+Because they are unchecked.
+
+The compiler does not require them to be declared or handled.
+
+---
+
+# Tricky Interview Questions
+
+## Question
+
+Will this compile?
+
+```java
+class Parent {
+
+    void test() throws IOException {
+
+    }
+}
+
+class Child extends Parent {
+
+    @Override
+    void test() throws Exception {
+
+    }
+}
+```
+
+### Answer
+
+❌ No.
+
+`Exception` is broader than `IOException`.
+
+---
+
+## Question
+
+Will this compile?
+
+```java
+class Parent {
+
+    void test() {
+
+    }
+}
+
+class Child extends Parent {
+
+    @Override
+    void test() throws RuntimeException {
+
+    }
+}
+```
+
+### Answer
+
+✅ Yes.
+
+Runtime exceptions are allowed.
+
+---
+
+## Question
+
+Will this compile?
+
+```java
+class Parent {
+
+    void test() {
+
+    }
+}
+
+class Child extends Parent {
+
+    @Override
+    void test() throws IOException {
+
+    }
+}
+```
+
+### Answer
+
+❌ No.
+
+The parent method does not declare a checked exception.
+
+---
+
+## Question
+
+Which exceptions are ignored by the compiler during overriding?
+
+### Answer
+
+Runtime Exceptions.
+
+---
+
+# Common Interview Trap
+
+## Question
+
+Can the child method throw more checked exceptions than the parent?
+
+### Answer
+
+No.
+
+The child can only:
+
+- Throw the same checked exception.
+- Throw a subclass of the parent's checked exception.
+- Throw any unchecked exception.
+
+---
+
+# Best Practices
+
+- Do not widen checked exceptions in overriding.
+- Prefer custom checked exceptions only when necessary.
+- Use RuntimeException for programming errors.
+- Preserve the parent's exception contract.
+
+---
+
+# Quick Revision
+
+```text
+Same Checked Exception           → ✅ Allowed
+
+Subclass Checked Exception       → ✅ Allowed
+
+Broader Checked Exception        → ❌ Not Allowed
+
+New Checked Exception            → ❌ Not Allowed
+
+Runtime Exception                → ✅ Always Allowed
+```
+
+---
+
+# One-Line Summary
+
+During method overriding, a child class can throw the same checked exception, a narrower checked exception, or any unchecked exception, but it cannot throw a broader or new checked exception than the parent method declares.
