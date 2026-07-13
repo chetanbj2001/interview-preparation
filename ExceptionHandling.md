@@ -4172,3 +4172,463 @@ Runtime Exception                → ✅ Always Allowed
 # One-Line Summary
 
 During method overriding, a child class can throw the same checked exception, a narrower checked exception, or any unchecked exception, but it cannot throw a broader or new checked exception than the parent method declares.
+# Top 25 Tricky Exception Interview Questions
+
+This section contains the most frequently asked rapid-fire exception handling questions in Java interviews.
+
+---
+
+## Q1. Can we have a try block without a catch block?
+
+### Answer
+
+Yes.
+
+If a `finally` block is present.
+
+Example:
+
+```java
+try {
+
+    System.out.println("Hello");
+
+} finally {
+
+    System.out.println("Cleanup");
+}
+```
+
+---
+
+## Q2. Can we have a catch block without a try block?
+
+### Answer
+
+No.
+
+Compilation Error.
+
+A catch block must always be associated with a try block.
+
+---
+
+## Q3. Can we have a try block without catch and finally?
+
+### Answer
+
+No.
+
+Compilation Error.
+
+A try block must be followed by at least one catch block or one finally block.
+
+---
+
+## Q4. Can we have multiple catch blocks?
+
+### Answer
+
+Yes.
+
+A single try block can have multiple catch blocks.
+
+JVM executes only the first matching catch block.
+
+---
+
+## Q5. Can we have multiple finally blocks?
+
+### Answer
+
+No.
+
+A try block can have only one finally block.
+
+---
+
+## Q6. Does finally always execute?
+
+### Answer
+
+Almost always.
+
+Exceptions:
+
+- System.exit()
+- JVM Crash
+- Power Failure
+- Forcefully killing the JVM process
+
+---
+
+## Q7. Can finally exist without catch?
+
+### Answer
+
+Yes.
+
+```java
+try {
+
+} finally {
+
+}
+```
+
+Valid Java code.
+
+---
+
+## Q8. Can catch exist without finally?
+
+### Answer
+
+Yes.
+
+```java
+try {
+
+} catch(Exception e){
+
+}
+```
+
+Valid Java code.
+
+---
+
+## Q9. Can we write return inside finally?
+
+### Answer
+
+Yes.
+
+But it is strongly discouraged because it overrides the return statement in the try block and may suppress exceptions.
+
+---
+
+## Q10. Which return executes?
+
+```java
+try {
+
+    return 10;
+
+} finally {
+
+    return 20;
+}
+```
+
+### Answer
+
+```text
+20
+```
+
+The return statement in finally overrides the one in try.
+
+---
+
+## Q11. Can finally throw an exception?
+
+### Answer
+
+Yes.
+
+But it overrides the exception thrown from the try block, making debugging difficult.
+
+Avoid this practice.
+
+---
+
+## Q12. Can constructors throw exceptions?
+
+### Answer
+
+Yes.
+
+```java
+class Student {
+
+    Student() throws IOException {
+
+    }
+}
+```
+
+---
+
+## Q13. Can the main() method throw an exception?
+
+### Answer
+
+Yes.
+
+```java
+public static void main(String[] args)
+        throws Exception {
+
+}
+```
+
+---
+
+## Q14. Can static blocks throw checked exceptions?
+
+### Answer
+
+No.
+
+Static blocks cannot declare `throws`.
+
+Checked exceptions must be handled inside the static block.
+
+---
+
+## Q15. Can static blocks throw RuntimeException?
+
+### Answer
+
+Yes.
+
+However, it may prevent the class from loading.
+
+---
+
+## Q16. What is the parent class of all exceptions?
+
+### Answer
+
+```java
+Throwable
+```
+
+---
+
+## Q17. What is the difference between Error and Exception?
+
+### Answer
+
+| Error | Exception |
+|--------|-----------|
+| Serious JVM problem | Application-level problem |
+| Usually not recoverable | Can be handled |
+| Example: OutOfMemoryError | Example: IOException |
+
+---
+
+## Q18. Can we throw null?
+
+### Example
+
+```java
+throw null;
+```
+
+### Answer
+
+Yes.
+
+At runtime, JVM throws:
+
+```text
+NullPointerException
+```
+
+---
+
+## Q19. Can we catch Error?
+
+### Answer
+
+Yes.
+
+Technically possible.
+
+Not recommended because Errors indicate serious JVM problems.
+
+---
+
+## Q20. Can we catch Throwable?
+
+### Answer
+
+Yes.
+
+```java
+catch(Throwable t){
+
+}
+```
+
+Not recommended.
+
+Prefer catching specific exceptions.
+
+---
+
+## Q21. What happens if the catch block throws another exception?
+
+### Example
+
+```java
+try {
+
+    int result = 10 / 0;
+
+} catch (ArithmeticException e) {
+
+    throw new NullPointerException();
+}
+```
+
+### Answer
+
+The new exception propagates.
+
+---
+
+## Q22. Which executes first?
+
+```java
+try
+
+↓
+
+catch
+
+↓
+
+finally
+```
+
+If no exception:
+
+```text
+try
+
+↓
+
+finally
+```
+
+---
+
+## Q23. Can we rethrow an exception?
+
+### Answer
+
+Yes.
+
+```java
+catch(Exception e){
+
+    throw e;
+}
+```
+
+This is called **Exception Rethrowing**.
+
+---
+
+## Q24. Can one catch block handle multiple exceptions?
+
+### Answer
+
+Yes.
+
+Java 7 introduced Multi-Catch.
+
+```java
+catch(IOException | SQLException e){
+
+}
+```
+
+---
+
+## Q25. Which exception should be caught first?
+
+### Answer
+
+Always catch:
+
+```text
+Specific Exception
+
+↓
+
+General Exception
+```
+
+Example
+
+```java
+catch(FileNotFoundException e)
+
+catch(IOException e)
+
+catch(Exception e)
+```
+
+Never write:
+
+```java
+catch(Exception e)
+
+catch(IOException e)
+```
+
+It causes a compilation error because the second catch block becomes unreachable.
+
+---
+
+# Interview Revision Sheet
+
+```text
+try without catch?                → Yes (if finally exists)
+
+catch without try?                → No
+
+try without finally?              → Yes
+
+Multiple catch?                   → Yes
+
+Multiple finally?                 → No
+
+finally always executes?          → Almost Always
+
+main() throws Exception?          → Yes
+
+Constructor throws Exception?     → Yes
+
+throw null?                       → NullPointerException
+
+Parent of all Exceptions?         → Throwable
+
+Runtime Exceptions propagate?     → Yes
+
+Checked Exceptions propagate?     → Using throws
+
+return inside finally?            → Avoid
+
+Multi-Catch introduced in?        → Java 7
+
+try-with-resources introduced?    → Java 7
+
+Resources close order?            → Reverse Order
+
+Throwable subclasses?             → Error and Exception
+
+Specific catch first?             → Yes
+
+General catch last?               → Yes
+```
+
+---
+
+# One-Line Summary
+
+Understanding these tricky exception handling scenarios helps you answer follow-up questions confidently and demonstrates a strong grasp of Java exception handling concepts during interviews.
