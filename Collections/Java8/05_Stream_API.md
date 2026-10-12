@@ -251,5 +251,4 @@ No. Streams do not support structural modification of their underlying source du
 * **Terminal ops return results/side-effects and trigger processing**: `collect()`, `forEach()`, `reduce()`, `count()`, `findFirst()`, `anyMatch()`.
 * **Single-use only**: Streams cannot be reused after triggering a terminal operation.
 * **Java 8 Compatibility**: Collect streams using `Collectors.toList()` (avoid `Stream.toList()` introduced in Java 16).
-# Collectors in Java 8
 
