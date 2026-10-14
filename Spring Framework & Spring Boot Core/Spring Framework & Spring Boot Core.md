@@ -75,10 +75,13 @@ Understanding the sequence of events from bean instantiation to destruction is c
 ### Starters
 Spring Boot Starters are a set of convenient dependency descriptors that you can include in your build. Instead of manually pulling down 10 different Hibernate/JDBC/Spring libraries, you include `spring-boot-starter-data-jpa`.
 
-### Auto-Configuration (`@EnableAutoConfiguration`)
-Spring Boot automatically configures your application based on the jar dependencies you have added to the classpath. It uses conditional annotations like:
-* `@ConditionalOnClass`: Configures a bean only if a specific class is present on the classpath.
-* `@ConditionalOnMissingBean`: Configures a bean only if a bean of that type does not already exist.
+### Auto-Configuration (`@EnableAutoConfiguration`) & How It Works Under the Hood
+Spring Boot automatically configures your application based on the jar dependencies present on the classpath. 
+* It looks for configuration classes listed in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` (in Spring Boot 3+) or `spring.factories` (in Spring Boot 2.x).
+* It uses conditional annotations to apply configurations conditionally:
+  * `@ConditionalOnClass`: Configures a bean only if a specific class is present on the classpath.
+  * `@ConditionalOnMissingBean`: Configures a bean only if a bean of that type does not already exist.
+  * `@ConditionalOnProperty`: Configures a bean based on whether a specific property exists and has a specific value.
 
 ```java
 import org.springframework.boot.SpringApplication;
@@ -87,7 +90,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 // @SpringBootApplication combines @Configuration, @EnableAutoConfiguration, and @ComponentScan
 @SpringBootApplication
 public class Application {
-    public static void main(String[] args) {
+    public staticmain(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 }
@@ -123,7 +126,64 @@ server:
 
 ---
 
-## 7. Tricky Interview Questions & Answers
+## 7. Global Exception Handling in Spring Boot
+Instead of handling exceptions in every controller using `try-catch`, Spring Boot provides `@RestControllerAdvice` to handle exceptions globally and return standardized error response payloads.
+
+```java
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import java.time.LocalDateTime;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse(
+            HttpStatus.NOT_FOUND.value(),
+            ex.getMessage(),
+            LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+}
+
+class ErrorResponse {
+    private int status;
+    private String message;
+    private LocalDateTime timestamp;
+
+    public ErrorResponse(int status, String message, LocalDateTime timestamp) {
+        this.status = status;
+        this.message = message;
+        this.timestamp = timestamp;
+    }
+    // Getters
+}
+
+class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+}
+```
+
+---
+
+## 8. Spring Boot Actuator
+Spring Boot Actuator brings production-ready features to your application by exposing operational information over HTTP or JMX.
+
+* **Common Endpoints**:
+  * `/actuator/health`: Shows application health status (UP/DOWN) and health indicators (DB, disk space).
+  * `/actuator/metrics`: Exposes JVM metrics, CPU usage, GC counters, and HTTP request statistics.
+  * `/actuator/env`: Exposes configuration properties from the Spring `Environment`.
+* **Security Note**: In production, sensitive Actuator endpoints should be secured using Spring Security to prevent unauthorized access.
+
+---
+
+## 9. Tricky Interview Questions & Answers
 
 ### Q1. What is the difference between `@Component`, `@Service`, and `@Repository`?
 Functionally, they are identical—all mark a class as a Spring-managed bean via component scanning. However, they carry semantic meaning and special features:
@@ -144,14 +204,15 @@ A circular dependency occurs when Bean A depends on Bean B, and Bean B depends o
 ### Q4. What happens under the hood when you annotate a class with `@SpringBootApplication`?
 It is a meta-annotation comprising three primary annotations:
 1. **`@Configuration`**: Tags the class as a source of bean definitions.
-2. **`@EnableAutoConfiguration`**: Tells Spring Boot to start adding beans based on classpath settings.
+2. **`@EnableAutoConfiguration`**: Tells Spring Boot to start adding beans based on classpath settings via `AutoConfiguration.imports`.
 3. **`@ComponentScan`**: Enables component scanning in the current package and sub-packages for `@Component`, `@Service`, etc.
 
 ---
 
-## 8. Quick Revision
+## 10. Quick Revision
 * **IoC / DI**: Spring container manages object lifecycles and injects dependencies.
 * **Constructor Injection**: Recommended over field injection for testability and immutability.
 * **Bean Scopes**: `singleton` (default, shared instance) vs `prototype` (new instance every request).
-* **`@SpringBootApplication`**: Combines `@Configuration`, `@EnableAutoConfiguration`, and `@ComponentScan`.
-* **Exception Translation**: `@Repository` automatically converts database exceptions into unified runtime exceptions.
+* **Auto-Configuration**: Powered by conditional annotations (`@ConditionalOnClass`, `@ConditionalOnMissingBean`) checking the classpath.
+* **Global Exception Handling**: Centralized error mapping via `@RestControllerAdvice` and `@ExceptionHandler`.
+* **Actuator**: Built-in production monitoring endpoints like `/actuator/health` and `/actuator/metrics`.
